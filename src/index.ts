@@ -1004,7 +1004,7 @@ declare namespace Internal {
     }
 
     namespace HTMLTableDataCellElement {
-        interface Props extends HTMLTableCellElement {}
+        interface Props extends HTMLTableCellElement.Props {}
     }
 
     namespace HTMLTableElement {
