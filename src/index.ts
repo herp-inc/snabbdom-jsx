@@ -1218,7 +1218,7 @@ export declare namespace jsx {
             tfoot: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
             th: Internal.HTMLElementProps<HTMLTableHeaderCellElement, Internal.HTMLTableHeaderCellElement.Props>;
             thead: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
-            time: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+            time: Internal.HTMLElementProps<HTMLTimeElement, Internal.HTMLTimeElement.Props>;
             title: Internal.HTMLElementProps<HTMLTitleElement, Internal.HTMLTitleElement.Props>;
             tr: Internal.HTMLElementProps<HTMLTableRowElement, Internal.HTMLTableRowElement.Props>;
             track: Internal.HTMLElementProps<HTMLTrackElement, Internal.HTMLTrackElement.Props>;
