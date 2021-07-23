@@ -18,6 +18,10 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
     for (const key in orig) {
         const v = orig[key];
 
+        if (v === undefined) {
+            continue;
+        }
+
         if (key === '$attrs' || key === 'attrs') {
             data.attrs = Object.assign(v, data.attrs ?? {});
         } else if (key.startsWith('aria-')) {
