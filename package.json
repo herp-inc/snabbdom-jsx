@@ -1,6 +1,6 @@
 {
   "name": "@herp-inc/snabbdom-jsx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Yet another JSX pragma for Snabbdom",
   "repository": "https://github.com/herp-inc/snabbdom-jsx",
   "main": "index.js",
