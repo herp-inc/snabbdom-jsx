@@ -6,6 +6,11 @@
   "main": "index.js",
   "type": "module",
   "typings": "index.d.ts",
+  "exports": {
+    ".": "./index.js",
+    "./jsx-runtime": "./jsx-runtime.js",
+    "./polyfills/older-snabbdom": "./polyfills/older-snabbdom.js"
+  },
   "author": "HERP, Inc. dev team <dev@herp.co.jp>",
   "license": "MIT",
   "devDependencies": {
