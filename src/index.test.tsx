@@ -617,58 +617,6 @@ describe(jsx, () => {
                 text: undefined,
             });
         });
-
-        test('returning null', () => {
-            const Null = () => null;
-
-            expect(<Null />).toStrictEqual({
-                children: undefined,
-                data: undefined,
-                elm: undefined,
-                key: undefined,
-                sel: '!',
-                text: 'null',
-            });
-        });
-
-        test('returning undefined', () => {
-            const Null = () => undefined;
-
-            expect(<Null />).toStrictEqual({
-                children: undefined,
-                data: undefined,
-                elm: undefined,
-                key: undefined,
-                sel: '!',
-                text: 'undefined',
-            });
-        });
-
-        test('returning string', () => {
-            const Hello = () => 'Hello, world!';
-
-            expect(<Hello />).toStrictEqual({
-                children: undefined,
-                data: undefined,
-                elm: undefined,
-                key: undefined,
-                sel: undefined,
-                text: 'Hello, world!',
-            });
-        });
-
-        test('returning 0', () => {
-            const Zero = () => 0;
-
-            expect(<Zero />).toStrictEqual({
-                children: undefined,
-                data: undefined,
-                elm: undefined,
-                key: undefined,
-                sel: undefined,
-                text: '0',
-            });
-        });
     });
 
     test('SVG', () => {

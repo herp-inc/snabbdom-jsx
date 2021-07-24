@@ -334,15 +334,6 @@ const Component: Snabbdom.Component<Props> = ({ name }, children) => (
 const vnode = <Component />;
 ```
 
-A primitive value can also returned from a component. It will be treated as a text node.
-
-```tsx
-const Answer = () => 42;
-
-const vnode = <Answer />;
-// { children: undefined, data: undefined, elm: undefined, key: undefined, sel: undefined, text: '42' }
-```
-
 ## Caveats
 
 - `boolean`, `null`, and `undefined` values are not be filtered out of the tree and rendered as comment nodes (for the sake of correct diffing)
