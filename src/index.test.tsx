@@ -451,7 +451,7 @@ describe(jsx, () => {
                 },
                 {
                     children: undefined,
-                    data: undefined,
+                    data: {},
                     elm: undefined,
                     key: undefined,
                     sel: '!',
@@ -459,7 +459,7 @@ describe(jsx, () => {
                 },
                 {
                     children: undefined,
-                    data: undefined,
+                    data: {},
                     elm: undefined,
                     key: undefined,
                     sel: '!',
@@ -467,7 +467,7 @@ describe(jsx, () => {
                 },
                 {
                     children: undefined,
-                    data: undefined,
+                    data: {},
                     elm: undefined,
                     key: undefined,
                     sel: '!',

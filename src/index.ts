@@ -108,7 +108,7 @@ const flatten = (children: Array<Snabbdom.Node | Snabbdom.Node[]>, flattened: VN
         } else if (child === undefined || child === null || child === false || child === true) {
             flattened.push({
                 children: undefined,
-                data: undefined,
+                data: {},
                 elm: undefined,
                 key: undefined,
                 sel: '!',
