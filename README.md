@@ -84,6 +84,14 @@ Make sure you are using TypeScript v4.1+ and add the following options to your `
 
 Then the `jsx` and the `jsxs` functions will automatically be imported.
 
+#### Using with older versions of Snabbdom
+
+If you are using Snabbdom older than v3, you also need to import the polyfill that provides the compatible type information. Add the following import statement to the entry point.
+
+```ts
+import '@herp-inc/snabbdom-jsx/polyfills/older-snabbdom';
+```
+
 ### With [Babel](https://babeljs.io/)
 
 Add [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx) to your `devDependencies`.
