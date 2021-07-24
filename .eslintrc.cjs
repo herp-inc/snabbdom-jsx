@@ -1,5 +1,6 @@
 module.exports = {
     extends: ['@herp-inc'],
+    ignorePatterns: ['/jsx-runtime.js'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
         project: './tsconfig.json',

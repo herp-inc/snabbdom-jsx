@@ -8,6 +8,7 @@ Yet another [JSX](https://facebook.github.io/jsx/) pragma for [Snabbdom](https:/
 - Attributes on intrinsic elements are typechecked (only for HTML elements for now)
 - `className` and `id` will be the part of the `sel`
 - Type-safe custom modules via module augmentation
+- Experimental support for [React 17 style new JSX transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 
 ## Example
 
@@ -47,6 +48,8 @@ $ yarn add @herp-inc/snabbdom-jsx
 
 ### With [TypeScript](https://www.typescriptlang.org/)
 
+#### Classic runtime
+
 Add the following options to your `tsconfig.json`:
 
 ```json
@@ -66,9 +69,28 @@ import { jsx } from '@herp-inc/snabbdom-jsx';
 const vnode = <div>Hello, JSX!</div>;
 ```
 
+#### Automatic runtime (experimental)
+
+Make sure you are using TypeScript v4.1+ and add the following options to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@herp-inc/snabbdom-jsx"
+  }
+}
+```
+
+Then the `jsx` and the `jsxs` functions will automatically be imported.
+
 ### With [Babel](https://babeljs.io/)
 
-Add [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx) to your `devDependencies`, and add the following options to your Babel configuration:
+Add [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx) to your `devDependencies`.
+
+#### Classic runtime
+
+Make sure are using Babel v7.9.0+ and add the following options to your Babel configuration:
 
 ```json
 {
@@ -76,7 +98,8 @@ Add [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/p
     [
       "@babel/plugin-transform-react-jsx",
       {
-        "pragma": "jsx"
+        "pragma": "jsx",
+        "runtime": "classic"
       }
     ]
   ]
@@ -90,6 +113,26 @@ import { jsx } from '@herp-inc/snabbdom-jsx';
 
 const vnode = <div>Hello, JSX!</div>;
 ```
+
+#### Automatic runtime (experimental)
+
+Add the following options to your Babel configuration:
+
+```json
+{
+  "plugins": [
+    [
+      "@babel/plugin-transform-react-jsx",
+      {
+        "importSource": "@herp-inc/snabbdom-jsx",
+        "runtime": "automatic"
+      }
+    ]
+  ]
+}
+```
+
+Then the `jsx` and the `jsxs` functions will automatically be imported.
 
 ## Attributes mapping
 

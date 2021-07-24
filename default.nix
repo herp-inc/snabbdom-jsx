@@ -18,7 +18,7 @@ pkgs.stdenv.mkDerivation rec {
   buildPhase=''
     HOME=$TMP yarn install --frozen-lockfile
     yarn rollup -c ./rollup.config.js
-    cp package.json README.md ./dist
+    cp jsx-runtime.js package.json README.md ./dist
     cd ./dist
     yarn pack
     cd ..
