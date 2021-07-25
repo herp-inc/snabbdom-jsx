@@ -163,7 +163,7 @@ An attribute starting with `aria-` will be passed to [the props module](https://
 
 ```tsx
 <button aria-label="Send" />
-// { ariaLabel: 'Send' }
+// { props: { ariaLabel: 'Send' } }
 ```
 
 ### `data-*`
