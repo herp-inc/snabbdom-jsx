@@ -58,12 +58,9 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
             } else {
                 data.on[k] = v;
             }
-        } else if (key === 'role') {
-            if (data.attrs === undefined) {
-                data.attrs = { role: v };
-            } else {
-                data.attrs.role = v;
-            }
+        } else if (key === 'list' || key === 'role') {
+            data.attrs ??= {};
+            data.attrs[key] = v;
         } else if (key === '$style' || key === 'style') {
             data.style = v;
         } else if (key.startsWith('$')) {

@@ -59,13 +59,42 @@ describe(jsx, () => {
         });
     });
 
+    describe('attributes passed not to props but to attrs', () => {
+        test('list', () => {
+            expect(<input list="options" />).toStrictEqual({
+                children: [],
+                data: {
+                    attrs: {
+                        list: 'options',
+                    },
+                },
+                elm: undefined,
+                key: undefined,
+                sel: 'input',
+                text: undefined,
+            });
+        });
+
+        test('role', () => {
+            expect(<div role="button" />).toStrictEqual({
+                children: [],
+                data: {
+                    attrs: {
+                        role: 'button',
+                    },
+                },
+                elm: undefined,
+                key: undefined,
+                sel: 'div',
+                text: undefined,
+            });
+        });
+    });
+
     test('aria', () => {
-        expect(<div role="button" aria-label="Send" />).toStrictEqual({
+        expect(<div aria-label="Send" />).toStrictEqual({
             children: [],
             data: {
-                attrs: {
-                    role: 'button',
-                },
                 props: {
                     ariaLabel: 'Send',
                 },

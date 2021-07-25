@@ -197,13 +197,16 @@ An attribute starting with `on` will passed to [the event listeners module](http
 // { on: { click: f } }
 ```
 
-### `role`
+### `list` and `role`
 
-The `role` attribute will be passed to [the attributes module](https://github.com/snabbdom/snabbdom#the-attributes-module).
+The `list` and the `role` attributes will be passed to [the attributes module](https://github.com/snabbdom/snabbdom#the-attributes-module).
 
 ```tsx
 <div role="button" />
 // { attrs: { role: 'button' } }
+
+<input list="options">
+// { attrs: { list: 'options' } }
 ```
 
 ### `$hook`
