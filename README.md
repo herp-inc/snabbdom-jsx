@@ -4,6 +4,7 @@ Yet another [JSX](https://facebook.github.io/jsx/) pragma for [Snabbdom](https:/
 
 ## Features
 
+- Straightforward and intuitive syntax: `<input type="text" />` rather than `<input props={{ type: 'text' }}>`
 - Supports recent major versions of Snabbdom
 - Attributes on intrinsic elements are typechecked (only for HTML elements for now)
 - `className` and `id` will be the part of the `sel`
@@ -155,7 +156,7 @@ However, certain attributes will be treated differently.
 
 ### `className` and `id`
 
-`className` and `id` attributes will be appended to the [`sel`](https://github.com/snabbdom/snabbdom#sel--string), and won't be passed to any modules. For example, the expression `<div id="foo" className="bar baz" />` will yield a virtual node with `{ sel: 'div#foo.bar.baz' }`
+`className` and `id` attributes will be concatenated to the [`sel`](https://github.com/snabbdom/snabbdom#sel--string) with `.` and `#` respectively, and won't be passed to any modules. For example, the expression `<div id="foo" className="bar baz" />` will yield a virtual node with `{ sel: 'div#foo.bar.baz' }`
 
 ### `aria-*`
 
@@ -230,6 +231,10 @@ The `$key` attribute is treated as [a key](https://github.com/snabbdom/snabbdom#
 ```
 
 For the sake of backward compatibility, `key` (without the dollar sign) also behaves the same. However it is deprecated and will be removed in the future.
+
+### SVG elements
+
+Attributes of `<svg>` and its descendant elements are passed to [the attributes module](https://github.com/snabbdom/snabbdom#the-attributes-module).
 
 ### Built-in modules
 
