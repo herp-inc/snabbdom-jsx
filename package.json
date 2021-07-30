@@ -1,8 +1,11 @@
 {
   "name": "@herp-inc/snabbdom-jsx",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Yet another JSX pragma for Snabbdom",
-  "keywords": ["snabbdom", "jsx"],
+  "keywords": [
+    "snabbdom",
+    "jsx"
+  ],
   "repository": "https://github.com/herp-inc/snabbdom-jsx",
   "main": "index.js",
   "type": "module",
