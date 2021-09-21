@@ -21,7 +21,7 @@
     "@herp-inc/eslint-config": "0.9.0",
     "@herp-inc/eslint-config-jest": "0.2.0",
     "@rollup/plugin-typescript": "8.2.5",
-    "@types/jest": "26.0.24",
+    "@types/jest": "27.0.2",
     "@typescript-eslint/eslint-plugin": "4.29.0",
     "@typescript-eslint/parser": "4.29.0",
     "csstype": "3.0.8",
