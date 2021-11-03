@@ -206,7 +206,7 @@ The `list` and the `role` attributes will be passed to [the attributes module](h
 <div role="button" />
 // { attrs: { role: 'button' } }
 
-<input list="options">
+<input list="options" />
 // { attrs: { list: 'options' } }
 ```
 
@@ -215,7 +215,13 @@ The `list` and the `role` attributes will be passed to [the attributes module](h
 The `$hook` attribute is treated as [hooks](https://github.com/snabbdom/snabbdom#hooks).
 
 ```tsx
-<div $hook={{ insert(vnode) { console.log(vnode); } }}>
+<div
+  $hook={{
+    insert(vnode) {
+      console.log(vnode);
+    },
+  }}
+/>
 // { hook: { insert: f } }
 ```
 
