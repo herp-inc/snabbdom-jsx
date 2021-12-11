@@ -626,7 +626,7 @@ declare namespace Internal {
     }
 
     namespace HTMLDetailsElement {
-        interface HTMLDetailsElementProps extends HTMLElement.Props {
+        interface Props extends HTMLElement.Props {
             open?: boolean | undefined;
         }
     }
@@ -1138,7 +1138,7 @@ export declare namespace jsx {
             datalist: Internal.HTMLElementProps<HTMLDataListElement, Internal.HTMLDataListElement.Props>;
             dd: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
             del: Internal.HTMLElementProps<HTMLModElement, Internal.HTMLModElement.Props>;
-            details: Internal.HTMLElementProps<HTMLDetailsElement, Internal.HTMLElement.Props>;
+            details: Internal.HTMLElementProps<HTMLDetailsElement, Internal.HTMLDetailsElement.Props>;
             dfn: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
             dialog: Internal.HTMLElementProps<HTMLDialogElement, Internal.HTMLDialogElement.Props>;
             div: Internal.HTMLElementProps<HTMLDivElement, Internal.HTMLDivElement.Props>;
