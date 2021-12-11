@@ -32,7 +32,7 @@
     "jest": "27.4.4",
     "prettier": "2.3.2",
     "rollup": "2.61.1",
-    "snabbdom": "3.0.3",
+    "snabbdom": "3.1.0",
     "ts-jest": "27.1.1",
     "typescript": "4.5.3"
   },
