@@ -670,7 +670,7 @@ declare namespace Internal {
             acceptCharset?: string | undefined;
             action?: string | undefined;
             autocomplete?: AutoComplete | undefined;
-            encType?: string | undefined;
+            enctype?: string | undefined;
             method?: Method | undefined;
             name?: string | undefined;
             noValidate?: boolean | undefined;
