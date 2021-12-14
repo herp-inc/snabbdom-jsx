@@ -15,6 +15,7 @@
     "./jsx-runtime": "./jsx-runtime.js",
     "./polyfills/older-snabbdom": "./polyfills/older-snabbdom.js"
   },
+  "sideEffects": false,
   "author": "HERP, Inc. dev team <dev@herp.co.jp>",
   "license": "MIT",
   "devDependencies": {
