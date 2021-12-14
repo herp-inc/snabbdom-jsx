@@ -188,6 +188,17 @@ export const jsx = (
     return vnode;
 };
 
+export function Fragment(_: Record<string, unknown>, ...children: Array<Snabbdom.Node | Snabbdom.Node[]>): VNode {
+    return {
+        children: flatten(children, []),
+        data: undefined,
+        elm: undefined,
+        sel: undefined,
+        key: undefined,
+        text: undefined,
+    };
+}
+
 declare namespace Internal {
     // eslint-disable-next-line @typescript-eslint/ban-types
     type Whatever = string & {};
