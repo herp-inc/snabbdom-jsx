@@ -47,6 +47,16 @@ $ yarn add @herp-inc/snabbdom-jsx
 
 ## Usage
 
+Note that fragments are still experimental. Make sure you are using Snabbdom v3.2+ and opt it in to enable the feature.
+
+```ts
+const patch = init(modules, undefined, {
+  experimental: {
+    fragments: true,
+  },
+});
+```
+
 ### With [TypeScript](https://www.typescriptlang.org/)
 
 #### Classic runtime
@@ -57,7 +67,8 @@ Add the following options to your `tsconfig.json`:
 {
   "compilerOptions": {
     "jsx": "react",
-    "jsxFactory": "jsx"
+    "jsxFactory": "jsx",
+    "jsxFragmentFactory": "Fragment"
   }
 }
 ```
@@ -68,6 +79,18 @@ Then import the `jsx` function in your `.tsx` file.
 import { jsx } from '@herp-inc/snabbdom-jsx';
 
 const vnode = <div>Hello, JSX!</div>;
+```
+
+When you want to use a JSX fragment, you also have to import the `Fragment` function.
+
+```tsx
+import { Fragment, jsx } from '@herp-inc/snabbdom-jsx';
+
+const vnode = (
+  <>
+    Hello, <strong>JSX</strong>!
+  </>
+);
 ```
 
 #### Automatic runtime (experimental)
@@ -108,6 +131,7 @@ Make sure are using Babel v7.9.0+ and add the following options to your Babel co
       "@babel/plugin-transform-react-jsx",
       {
         "pragma": "jsx",
+        "pragmaFrag": "Fragment",
         "runtime": "classic"
       }
     ]
@@ -121,6 +145,18 @@ Then import the `jsx` function in your file.
 import { jsx } from '@herp-inc/snabbdom-jsx';
 
 const vnode = <div>Hello, JSX!</div>;
+```
+
+When you want to use a JSX fragment, you also have to import the `Fragment` function.
+
+```tsx
+import { Fragment, jsx } from '@herp-inc/snabbdom-jsx';
+
+const vnode = (
+  <>
+    Hello, <strong>JSX</strong>!
+  </>
+);
 ```
 
 #### Automatic runtime (experimental)

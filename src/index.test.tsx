@@ -1,4 +1,4 @@
-import Snabbdom, { jsx } from '.';
+import Snabbdom, { Fragment, jsx } from '.';
 
 declare module '.' {
     namespace jsx {
@@ -458,6 +458,159 @@ describe(jsx, () => {
                 ))}
             </div>,
         ).toStrictEqual(expected);
+    });
+
+    describe('fragments', () => {
+        test('w/ no children', () => {
+            expect(<></>).toStrictEqual({
+                children: [],
+                data: undefined,
+                elm: undefined,
+                key: undefined,
+                sel: undefined,
+                text: undefined,
+            });
+        });
+
+        test('w/ single string child', () => {
+            expect(<>Hello, world!</>).toStrictEqual({
+                children: [
+                    {
+                        children: undefined,
+                        data: undefined,
+                        elm: undefined,
+                        key: undefined,
+                        sel: undefined,
+                        text: 'Hello, world!',
+                    },
+                ],
+                data: undefined,
+                elm: undefined,
+                key: undefined,
+                sel: undefined,
+                text: undefined,
+            });
+        });
+
+        test('w/ single HTML child', () => {
+            expect(
+                <>
+                    <span>Hello, world!</span>
+                </>,
+            ).toStrictEqual({
+                children: [
+                    {
+                        children: undefined,
+                        data: {},
+                        elm: undefined,
+                        key: undefined,
+                        sel: 'span',
+                        text: 'Hello, world!',
+                    },
+                ],
+                data: undefined,
+                elm: undefined,
+                key: undefined,
+                sel: undefined,
+                text: undefined,
+            });
+        });
+
+        test('w/ multiple mixed elements', () => {
+            expect(
+                <>
+                    Hello, <span>world!</span>
+                </>,
+            ).toStrictEqual({
+                children: [
+                    {
+                        children: undefined,
+                        data: undefined,
+                        elm: undefined,
+                        key: undefined,
+                        sel: undefined,
+                        text: 'Hello, ',
+                    },
+                    {
+                        children: undefined,
+                        data: {},
+                        elm: undefined,
+                        key: undefined,
+                        sel: 'span',
+                        text: 'world!',
+                    },
+                ],
+                data: undefined,
+                elm: undefined,
+                key: undefined,
+                sel: undefined,
+                text: undefined,
+            });
+        });
+
+        test('w/ nested fragment children', () => {
+            expect(
+                <>
+                    <>
+                        <>Hello, world!</>
+                    </>
+                </>,
+            ).toStrictEqual({
+                children: [
+                    {
+                        children: [
+                            {
+                                children: [
+                                    {
+                                        children: undefined,
+                                        data: undefined,
+                                        elm: undefined,
+                                        key: undefined,
+                                        sel: undefined,
+                                        text: 'Hello, world!',
+                                    },
+                                ],
+                                data: undefined,
+                                elm: undefined,
+                                key: undefined,
+                                sel: undefined,
+                                text: undefined,
+                            },
+                        ],
+                        data: undefined,
+                        elm: undefined,
+                        key: undefined,
+                        sel: undefined,
+                        text: undefined,
+                    },
+                ],
+                data: undefined,
+                elm: undefined,
+                key: undefined,
+                sel: undefined,
+                text: undefined,
+            });
+        });
+
+        test('w/ key', () => {
+            expect(<Fragment $key="key">Hello, world!</Fragment>).toStrictEqual({
+                children: [
+                    {
+                        children: undefined,
+                        data: undefined,
+                        elm: undefined,
+                        key: undefined,
+                        sel: undefined,
+                        text: 'Hello, world!',
+                    },
+                ],
+                data: undefined,
+                elm: undefined,
+                key: 'key',
+                sel: undefined,
+                text: undefined,
+            });
+        });
     });
 
     test('conditional rendering', () => {
