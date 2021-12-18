@@ -191,7 +191,7 @@ export const jsx = (
 export function Fragment(_: Record<string, unknown>, ...children: Array<Snabbdom.Node | Snabbdom.Node[]>): VNode {
     return {
         children: flatten(children, []),
-        data: undefined,
+        data: {},
         elm: undefined,
         sel: undefined,
         key: undefined,
