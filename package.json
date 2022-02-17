@@ -19,7 +19,7 @@
   "author": "HERP, Inc. dev team <dev@herp.co.jp>",
   "license": "MIT",
   "devDependencies": {
-    "@herp-inc/eslint-config": "0.11.0",
+    "@herp-inc/eslint-config": "0.13.0",
     "@herp-inc/eslint-config-jest": "0.3.0",
     "@rollup/plugin-typescript": "8.3.0",
     "@types/jest": "27.0.3",
