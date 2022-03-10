@@ -322,10 +322,10 @@
   resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config-jest/-/eslint-config-jest-0.3.0.tgz#8ce25251733c504afc8f2ace6ecb81a511e9109f"
   integrity sha512-U4WBHUkJdTlGtAKnDK4C1y6+WrZb0a7qvCjsE+Sb+c5s6D/gkY6sRvkJx8u9Bs9HT1sz3qHnoTT0Rawp1iMc0w==
 
-"@herp-inc/eslint-config@0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config/-/eslint-config-0.11.0.tgz#dfc1ff2ae259035f98b8eb861114987635d36191"
-  integrity sha512-fB+5h+dvtavJ0O4nR2f+rOXHFigEgKkTLQr1Vq/ji6WKds7x1hdfA7L6OlNwRhaRnWmNEX9+1dOwifLp4YABSQ==
+"@herp-inc/eslint-config@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config/-/eslint-config-0.13.0.tgz#3a63de7d00a71d72ea657a536e665a4f8f861abb"
+  integrity sha512-A42pKSAFlF2wE+1W6bIftSBaO20AYl7TIFxqE93jlq/e9QeGpVIrpKsYXhnINoIawVPNzIrc0q4dnM7wljaWgw==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.2"
