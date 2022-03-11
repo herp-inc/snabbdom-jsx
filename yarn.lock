@@ -317,10 +317,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@herp-inc/eslint-config-jest@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config-jest/-/eslint-config-jest-0.3.0.tgz#8ce25251733c504afc8f2ace6ecb81a511e9109f"
-  integrity sha512-U4WBHUkJdTlGtAKnDK4C1y6+WrZb0a7qvCjsE+Sb+c5s6D/gkY6sRvkJx8u9Bs9HT1sz3qHnoTT0Rawp1iMc0w==
+"@herp-inc/eslint-config-jest@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config-jest/-/eslint-config-jest-0.4.0.tgz#de71118a6443d05ea0f4be4b6ba35acf3ca0dea5"
+  integrity sha512-44m/LnZtgAK5MZQVdVb0oOKB5eq2wCbw7l92uY+qmjTqa1oesDQN6QPHGUpROcb/EDkDtcDBsG06QK9GfQvmdw==
 
 "@herp-inc/eslint-config@0.13.0":
   version "0.13.0"
