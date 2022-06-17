@@ -25,12 +25,8 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
         if (key === '$attrs' || key === 'attrs') {
             data.attrs = Object.assign(v, data.attrs ?? {});
         } else if (key.startsWith('aria-')) {
-            const k = kebab2camel(key);
-            if (data.props === undefined) {
-                data.props = { [k]: v };
-            } else {
-                data.props[k] = v;
-            }
+            data.attrs ??= {};
+            data.attrs[key] = v;
         } else if (key === '$class' || key === 'class') {
             data.class = v;
         } else if (key === 'className' || key === 'id') {
