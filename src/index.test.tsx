@@ -95,8 +95,8 @@ describe(jsx, () => {
         expect(<div aria-label="Send" />).toStrictEqual({
             children: [],
             data: {
-                props: {
-                    ariaLabel: 'Send',
+                attrs: {
+                    'aria-label': 'Send',
                 },
             },
             elm: undefined,

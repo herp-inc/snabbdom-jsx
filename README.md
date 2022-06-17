@@ -196,11 +196,11 @@ However, certain attributes will be treated differently.
 
 ### `aria-*`
 
-An attribute starting with `aria-` will be passed to [the props module](https://github.com/snabbdom/snabbdom#the-props-module). Note that dashes will be converted to camel case.
+An attribute starting with `aria-` will be passed to [the attributes module](https://github.com/snabbdom/snabbdom#the-attributes-module).
 
 ```tsx
 <button aria-label="Send" />
-// { props: { ariaLabel: 'Send' } }
+// { attrs: { 'aria-label': 'Send' } }
 ```
 
 ### `data-*`
