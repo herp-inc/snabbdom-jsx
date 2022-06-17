@@ -366,7 +366,7 @@ declare module '@herp-inc/snabbdom-jsx' {
 
 ## Components
 
-A component can be defined with a function with the signature of `<Props>(props: Props, children: Snabbdom.Node[]): Snabbdom.Node`.
+A component can be defined with a function with the signature of `<Props>(props: Props, children: Snabbdom.Node[]) => Snabbdom.Node`.
 
 ```tsx
 import Snabbdom, { jsx } from '@herp-inc/snabbdom-jsx';
