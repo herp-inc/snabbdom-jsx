@@ -549,6 +549,11 @@
   resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config/-/eslint-config-0.13.0.tgz#3a63de7d00a71d72ea657a536e665a4f8f861abb"
   integrity sha512-A42pKSAFlF2wE+1W6bIftSBaO20AYl7TIFxqE93jlq/e9QeGpVIrpKsYXhnINoIawVPNzIrc0q4dnM7wljaWgw==
 
+"@herp-inc/tsconfig.json@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@herp-inc/tsconfig.json/-/tsconfig.json-1.0.0.tgz#c13ff88c2a59a4e7a7b9c8c9f09cb7c8d5616c72"
+  integrity sha512-ZRdm2R7GNRybeHaa9ydOI02Q5KQvg84B3Q4GGiR7ont0lz2u5dCQcKjzsienxCzeqUs3bWDhLGjIUtGxUWbSiw==
+
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.8.tgz#03595ac2075a4dc0f191cc2131de14fbd7d410b9"
