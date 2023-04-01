@@ -21,7 +21,7 @@
   "devDependencies": {
     "@herp-inc/eslint-config": "0.13.0",
     "@herp-inc/eslint-config-jest": "0.4.0",
-    "@rollup/plugin-typescript": "8.5.0",
+    "@rollup/plugin-typescript": "11.0.0",
     "@types/jest": "28.1.8",
     "@typescript-eslint/eslint-plugin": "5.28.0",
     "@typescript-eslint/parser": "5.28.0",
