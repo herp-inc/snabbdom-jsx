@@ -133,10 +133,10 @@ export const jsx = (
             vnode = flatten([vnode], [])[0]!;
         }
 
-        if (data.$key !== undefined) {
-            vnode.key = data.$key as Key;
-        } else if (data.key !== undefined) {
-            vnode.key = data.key as Key;
+        if (data['$key'] !== undefined) {
+            vnode.key = data['$key'] as Key;
+        } else if (data['key'] !== undefined) {
+            vnode.key = data['key'] as Key;
         }
 
         return vnode;
@@ -144,11 +144,11 @@ export const jsx = (
 
     // intrinsic elements
     let sel = tag;
-    const id = data.id as string;
+    const id = data['id'] as string;
     if (id !== undefined) {
         sel += `#${id}`;
     }
-    const className = data.className as string;
+    const className = data['className'] as string;
     if (className !== undefined) {
         for (const cls of className.trim().split(' ')) {
             sel += `.${cls}`;
@@ -173,7 +173,7 @@ export const jsx = (
         data: canonicalizedData,
         elm: undefined,
         sel,
-        key: (data?.$key as Key) ?? (data?.key as Key),
+        key: (data?.['$key'] as Key) ?? (data?.['key'] as Key),
         text: undefined,
     };
 
