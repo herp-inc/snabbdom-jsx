@@ -31,3 +31,11 @@ jobs:
       - name: Run tests
         run: |
           yarn jest ./src
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          extra_nix_config: |
+            sandbox = false
+          nix_path: nixpkgs=channel:nixpkgs-unstable
+      - name: Build
+        run: nix-build
