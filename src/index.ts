@@ -1,5 +1,5 @@
 import type * as CSS from 'csstype';
-import type { Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode, VNodeData } from 'snabbdom';
+import type { ArrayOrElement, Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode, VNodeData } from 'snabbdom';
 
 const kebab2camel = (kebab: string): string => {
     const [hd, ...tl] = kebab.split('-');
@@ -85,7 +85,7 @@ const considerSVG = (vnode: VNode): VNode => {
     };
 };
 
-const flatten = (children: Array<Snabbdom.Node | Snabbdom.Node[]>, flattened: VNode[]): VNode[] => {
+const flatten = (children: Snabbdom.Node[], flattened: VNode[]): VNode[] => {
     for (const child of children) {
         if (Array.isArray(child)) {
             flatten(child, flattened);
@@ -117,7 +117,7 @@ const flatten = (children: Array<Snabbdom.Node | Snabbdom.Node[]>, flattened: VN
 export const jsx = (
     tag: string | Snabbdom.Component<unknown>,
     data: Record<string, unknown> | null,
-    ...children: Array<Snabbdom.Node | Snabbdom.Node[]>
+    ...children: Snabbdom.Node[]
 ): VNode => {
     // eslint-disable-next-line no-param-reassign
     data ??= {};
@@ -184,7 +184,7 @@ export const jsx = (
     return vnode;
 };
 
-export function Fragment(_: Record<string, unknown>, ...children: Array<Snabbdom.Node | Snabbdom.Node[]>): VNode {
+export function Fragment(_: Record<string, unknown>, ...children: Snabbdom.Node[]): VNode {
     return {
         children: flatten(children, []),
         data: {},
@@ -1095,7 +1095,7 @@ declare namespace Internal {
 
 declare namespace Snabbdom {
     type Component<Props> = (this: void, props: Readonly<Props>, children?: VNode[]) => VNode;
-    type Node = boolean | null | number | string | undefined | VNode;
+    type Node = ArrayOrElement<boolean | null | number | string | undefined | VNode>;
 }
 // eslint-disable-next-line import/no-default-export
 export default Snabbdom;
