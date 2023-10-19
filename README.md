@@ -9,7 +9,7 @@ Yet another [JSX](https://facebook.github.io/jsx/) pragma for [Snabbdom](https:/
 - Attributes on intrinsic elements are typechecked (only for HTML elements for now)
 - `className` and `id` will be the part of the `sel`
 - Type-safe custom modules via module augmentation
-- Experimental support for [React 17 style new JSX transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
+- Support for [React 17 style new JSX transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 
 ## Example
 
@@ -93,7 +93,7 @@ const vnode = (
 );
 ```
 
-#### Automatic runtime (experimental)
+#### Automatic runtime
 
 Make sure you are using TypeScript v4.1+ and add the following options to your `tsconfig.json`:
 
@@ -159,7 +159,7 @@ const vnode = (
 );
 ```
 
-#### Automatic runtime (experimental)
+#### Automatic runtime
 
 Add the following options to your Babel configuration:
 
