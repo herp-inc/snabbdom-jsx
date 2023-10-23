@@ -32,7 +32,7 @@ jobs:
         run: |
           yarn jest ./src
       - name: Install Nix
-        uses: cachix/install-nix-action@v22
+        uses: cachix/install-nix-action@v23
         with:
           extra_nix_config: |
             sandbox = false
