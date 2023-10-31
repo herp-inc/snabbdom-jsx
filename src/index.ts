@@ -1111,6 +1111,9 @@ export declare namespace jsx {
     }
 
     namespace JSX {
+        /**
+         * @deprecated
+         */
         type Element = VNode;
 
         type ElementType = keyof IntrinsicElements | ((props: unknown, children?: unknown) => Snabbdom.Node);
