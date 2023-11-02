@@ -1116,7 +1116,7 @@ export declare namespace jsx {
          */
         type Element = VNode;
 
-        type ElementType = keyof IntrinsicElements | ((props: unknown, children?: unknown) => Snabbdom.Node);
+        type ElementType<Props> = keyof IntrinsicElements | ((props: Props, children?: unknown) => Snabbdom.Node);
 
         type IntrinsicAttributes = {
             $key?: Key;
