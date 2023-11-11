@@ -35,7 +35,7 @@ Note that the following packages are peer dependencies of this library, which ne
 ### With [npm](https://www.npmjs.com/)
 
 ```sh
-npm install @herp-inc/snabbdom-jsx
+$ npm install @herp-inc/snabbdom-jsx
 ```
 
 ### With [yarn](https://yarnpkg.com/)
