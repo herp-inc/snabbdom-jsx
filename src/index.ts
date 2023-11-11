@@ -1116,7 +1116,8 @@ export declare namespace jsx {
          */
         type Element = VNode;
 
-        type ElementType<Props> = keyof IntrinsicElements | ((props: Props, children?: unknown) => Snabbdom.Node);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        type ElementType = keyof IntrinsicElements | ((props: any, children?: VNode[]) => Snabbdom.Node);
 
         type IntrinsicAttributes = {
             $key?: Key;
