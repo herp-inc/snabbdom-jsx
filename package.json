@@ -12,8 +12,7 @@
   "typings": "index.d.ts",
   "exports": {
     ".": "./index.js",
-    "./jsx-runtime": "./jsx-runtime.js",
-    "./polyfills/older-snabbdom": "./polyfills/older-snabbdom.js"
+    "./jsx-runtime": "./jsx-runtime.js"
   },
   "sideEffects": false,
   "author": "HERP, Inc. dev team <dev@herp.co.jp>",
@@ -38,6 +37,6 @@
   },
   "peerDependencies": {
     "csstype": "3",
-    "snabbdom": "*"
+    "snabbdom": "3"
   }
 }

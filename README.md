@@ -5,7 +5,6 @@ Yet another [JSX](https://facebook.github.io/jsx/) pragma for [Snabbdom](https:/
 ## Features
 
 - Straightforward and intuitive syntax: `<input type="text" />` rather than `<input props={{ type: 'text' }}>`
-- Supports recent major versions of Snabbdom
 - Attributes on intrinsic elements are typechecked (only for HTML elements for now)
 - `className` and `id` will be the part of the `sel`
 - Type-safe custom modules via module augmentation
@@ -31,7 +30,7 @@ Note that the following packages are peer dependencies of this library, which ne
 | Package                                              | Version |
 | ---------------------------------------------------- | ------- |
 | [`csstype`](https://www.npmjs.com/package/csstype)   | `3`     |
-| [`snabbdom`](https://www.npmjs.com/package/snabbdom) | `*`     |
+| [`snabbdom`](https://www.npmjs.com/package/snabbdom) | `3`     |
 
 ### With [npm](https://www.npmjs.com/)
 
@@ -107,14 +106,6 @@ Make sure you are using TypeScript v4.1+ and add the following options to your `
 ```
 
 Then the `jsx` and the `jsxs` functions will automatically be imported.
-
-#### Using with older versions of Snabbdom
-
-If you are using Snabbdom older than v3, you also need to import the polyfill that provides the compatible type information. Add the following import statement to the entry point.
-
-```ts
-import '@herp-inc/snabbdom-jsx/polyfills/older-snabbdom';
-```
 
 ### With [Babel](https://babeljs.io/)
 
