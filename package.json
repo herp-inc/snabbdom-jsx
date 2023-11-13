@@ -18,7 +18,7 @@
   "author": "HERP, Inc. dev team <dev@herp.co.jp>",
   "license": "MIT",
   "devDependencies": {
-    "@herp-inc/eslint-config": "0.13.0",
+    "@herp-inc/eslint-config": "0.26.0",
     "@herp-inc/eslint-config-jest": "0.4.0",
     "@herp-inc/tsconfig.json": "1.0.0",
     "@types/jest": "29.5.8",
