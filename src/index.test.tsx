@@ -616,7 +616,9 @@ describe(jsx, () => {
     test('conditional rendering', () => {
         expect(
             <div>
+                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                 {true && <span>shown</span>}
+                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                 {false && <span>hidden</span>}
                 {null}
                 {undefined}

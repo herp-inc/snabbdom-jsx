@@ -16,6 +16,7 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
     const data: VNodeData = {};
 
     for (const key in orig) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const v = orig[key];
 
         if (v === undefined) {
@@ -23,19 +24,26 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
         }
 
         if (key === '$attrs' || key === 'attrs') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.attrs = Object.assign(v, data.attrs ?? {});
         } else if (key.startsWith('aria-')) {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.attrs ??= {};
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.attrs[key] = v;
         } else if (key === '$class' || key === 'class') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.class = v;
         } else if (key === 'className' || key === 'id') {
             // skipping in favor of sel
         } else if (key === '$data' || key === 'data' || key === 'dataset') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.dataset = Object.assign(v, data.dataset ?? {});
         } else if (key.startsWith('data-')) {
             const k = kebab2camel(key.replace('data-', ''));
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.dataset ??= {};
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.dataset[k] = v;
         } else if (key === '$hook' || key === 'hook') {
             data.hook = v;
@@ -55,7 +63,9 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
                 data.on[k] = v;
             }
         } else if (key === 'list' || key === 'role') {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.attrs ??= {};
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.attrs[key] = v;
         } else if (key === '$style' || key === 'style') {
             data.style = v;
@@ -63,6 +73,7 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
             const mod = key.substring(1);
             data[mod] = v;
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.props ??= {};
             data.props[key] = v;
         }
@@ -129,6 +140,7 @@ export const jsx = (
         let vnode = tag(data, flatChildren);
 
         // when a primitive value is returned from the function component
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (typeof vnode !== 'object' || vnode === null) {
             vnode = flatten([vnode], [])[0]!;
         }
@@ -144,11 +156,11 @@ export const jsx = (
 
     // intrinsic elements
     let sel = tag;
-    const id = data['id'] as string;
+    const id = data['id'] as string | undefined;
     if (id !== undefined) {
         sel += `#${id}`;
     }
-    const className = data['className'] as string;
+    const className = data['className'] as string | undefined;
     if (className !== undefined) {
         for (const cls of className.trim().split(' ')) {
             sel += `.${cls}`;
@@ -157,6 +169,7 @@ export const jsx = (
 
     const canonicalizedData = canonicalizeVNodeData(data);
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (flatChildren.length === 1 && flatChildren[0]?.sel === undefined && typeof flatChildren[0]?.text !== undefined) {
         return {
             children: undefined,
@@ -173,7 +186,7 @@ export const jsx = (
         data: canonicalizedData,
         elm: undefined,
         sel,
-        key: (data?.['$key'] as Key) ?? (data?.['key'] as Key),
+        key: (data['$key'] as Key | undefined) ?? (data['key'] as Key | undefined),
         text: undefined,
     };
 
