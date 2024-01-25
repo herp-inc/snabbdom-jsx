@@ -1196,7 +1196,7 @@ declare namespace Internal {
     }
 }
 
-export declare namespace Snabbdom {
+declare namespace Snabbdom {
     type Component<Props> = (this: void, props: Readonly<Props>, children?: Node) => VNode;
     type Node = ArrayOrElement<VNodeChildElement>;
     type VNodeChildElement = boolean | null | number | string | undefined | VNode;

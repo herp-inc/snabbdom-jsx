@@ -7,10 +7,12 @@
     "jsx"
   ],
   "repository": "https://github.com/herp-inc/snabbdom-jsx",
-  "main": "index.js",
   "type": "module",
   "typings": "index.d.ts",
   "exports": {
+    ".": {
+      "types": "./index.d.ts"
+    },
     "./jsx-runtime": "./jsx-runtime.js"
   },
   "sideEffects": false,
