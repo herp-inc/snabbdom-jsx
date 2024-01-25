@@ -18,7 +18,7 @@ pkgs.stdenv.mkDerivation rec {
   buildPhase=''
     HOME=$TMP yarn install --frozen-lockfile
     yarn tsc --project ./tsconfig.build.json
-    cp -r jsx-runtime.d.ts jsx-runtime.js package.json README.md ./dist
+    cp -r package.json README.md ./dist
     cd ./dist
     yarn pack
     cd ..

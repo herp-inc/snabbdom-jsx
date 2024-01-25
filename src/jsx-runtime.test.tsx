@@ -1,6 +1,6 @@
-import Snabbdom, { Fragment, jsx } from '.';
+import type Snabbdom from './jsx-runtime';
 
-declare module '.' {
+declare module './jsx-runtime' {
     namespace jsx {
         interface CustomModules {
             custom: {
@@ -10,10 +10,10 @@ declare module '.' {
     }
 }
 
-describe(jsx, () => {
+describe('automatic runtime', () => {
     test('sel', () => {
         expect(<div />).toStrictEqual({
-            children: [],
+            children: undefined,
             data: {},
             elm: undefined,
             key: undefined,
@@ -22,7 +22,7 @@ describe(jsx, () => {
         });
 
         expect(<div id="id" className="foo bar" />).toStrictEqual({
-            children: [],
+            children: undefined,
             data: {},
             elm: undefined,
             key: undefined,
@@ -33,7 +33,7 @@ describe(jsx, () => {
 
     test('property', () => {
         expect(<div dir="ltr" />).toStrictEqual({
-            children: [],
+            children: undefined,
             data: {
                 props: {
                     dir: 'ltr',
@@ -48,7 +48,7 @@ describe(jsx, () => {
 
     test('key', () => {
         expect(<div $key="foo" />).toStrictEqual({
-            children: [],
+            children: undefined,
             data: {
                 key: 'foo',
             },
@@ -62,7 +62,7 @@ describe(jsx, () => {
     describe('attributes passed not to props but to attrs', () => {
         test('list', () => {
             expect(<input list="options" />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     attrs: {
                         list: 'options',
@@ -77,7 +77,7 @@ describe(jsx, () => {
 
         test('role', () => {
             expect(<div role="button" />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     attrs: {
                         role: 'button',
@@ -93,7 +93,7 @@ describe(jsx, () => {
 
     test('aria', () => {
         expect(<div aria-label="Send" />).toStrictEqual({
-            children: [],
+            children: undefined,
             data: {
                 attrs: {
                     'aria-label': 'Send',
@@ -112,7 +112,7 @@ describe(jsx, () => {
         };
 
         expect(<div $hook={{ insert: onInsert }} />).toStrictEqual({
-            children: [],
+            children: undefined,
             data: {
                 hook: {
                     insert: onInsert,
@@ -128,7 +128,7 @@ describe(jsx, () => {
     describe('modules', () => {
         test('attributes module', () => {
             expect(<div $attrs={{ class: 'foo' }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     attrs: {
                         class: 'foo',
@@ -143,7 +143,7 @@ describe(jsx, () => {
 
         test('class module', () => {
             expect(<div className="foo" $class={{ bar: true, baz: false }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     class: {
                         bar: true,
@@ -163,7 +163,7 @@ describe(jsx, () => {
             };
 
             expect(<div onclick={onclick} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     on: {
                         click: onclick,
@@ -179,7 +179,7 @@ describe(jsx, () => {
         describe('dataset module', () => {
             test('data-* attribute', () => {
                 expect(<div data-foo="bar" data-foo-bar="baz" />).toStrictEqual({
-                    children: [],
+                    children: undefined,
                     data: {
                         dataset: {
                             foo: 'bar',
@@ -195,7 +195,7 @@ describe(jsx, () => {
 
             test('$dataset attribute', () => {
                 expect(<div $dataset={{ foo: 'bar' }} />).toStrictEqual({
-                    children: [],
+                    children: undefined,
                     data: {
                         dataset: {
                             foo: 'bar',
@@ -211,7 +211,7 @@ describe(jsx, () => {
 
         test('props module', () => {
             expect(<div $props={{ dir: 'ltr' }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     props: {
                         dir: 'ltr',
@@ -226,7 +226,7 @@ describe(jsx, () => {
 
         test('style module', () => {
             expect(<div $style={{ backgroundColor: 'red', delayed: { backgroundColor: 'blue' } }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     style: {
                         backgroundColor: 'red',
@@ -244,7 +244,7 @@ describe(jsx, () => {
 
         test('custom modules', () => {
             expect(<div $custom={{ foo: 'bar' }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     custom: {
                         foo: 'bar',
@@ -261,7 +261,7 @@ describe(jsx, () => {
     describe('backward compatibility', () => {
         test('key', () => {
             expect(<div key="foo" />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     key: 'foo',
                 },
@@ -278,7 +278,7 @@ describe(jsx, () => {
             };
 
             expect(<div hook={{ insert: onInsert }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     hook: {
                         insert: onInsert,
@@ -293,7 +293,7 @@ describe(jsx, () => {
 
         test('attributes module', () => {
             expect(<div attrs={{ class: 'foo' }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     attrs: {
                         class: 'foo',
@@ -308,7 +308,7 @@ describe(jsx, () => {
 
         test('class module', () => {
             expect(<div className="foo" class={{ bar: true, baz: false }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     class: {
                         bar: true,
@@ -324,7 +324,7 @@ describe(jsx, () => {
 
         test('dataset module', () => {
             const vnode = {
-                children: [],
+                children: undefined,
                 data: {
                     dataset: {
                         foo: 'bar',
@@ -346,7 +346,7 @@ describe(jsx, () => {
             };
 
             expect(<div on={{ click: onclick }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     on: {
                         click: onclick,
@@ -361,7 +361,7 @@ describe(jsx, () => {
 
         test('props module', () => {
             expect(<div props={{ dir: 'ltr' }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     props: {
                         dir: 'ltr',
@@ -376,7 +376,7 @@ describe(jsx, () => {
 
         test('style module', () => {
             expect(<div style={{ backgroundColor: 'red', delayed: { backgroundColor: 'blue' } }} />).toStrictEqual({
-                children: [],
+                children: undefined,
                 data: {
                     style: {
                         backgroundColor: 'red',
@@ -395,7 +395,7 @@ describe(jsx, () => {
 
     test('custom elements', () => {
         expect(<div is="custom-element" />).toStrictEqual({
-            children: [],
+            children: undefined,
             data: {
                 is: 'custom-element',
             },
@@ -456,6 +456,13 @@ describe(jsx, () => {
                 {['Hello,', 'world!'].map((str) => (
                     <span>{str}</span>
                 ))}
+            </div>,
+        ).toStrictEqual(expected);
+
+        expect(
+            <div>
+                <span>Hello,</span>
+                {[<span>world!</span>]}
             </div>,
         ).toStrictEqual(expected);
     });
@@ -591,26 +598,6 @@ describe(jsx, () => {
                 text: undefined,
             });
         });
-
-        test('w/ key', () => {
-            expect(<Fragment $key="key">Hello, world!</Fragment>).toStrictEqual({
-                children: [
-                    {
-                        children: undefined,
-                        data: undefined,
-                        elm: undefined,
-                        key: undefined,
-                        sel: undefined,
-                        text: 'Hello, world!',
-                    },
-                ],
-                data: {},
-                elm: undefined,
-                key: 'key',
-                sel: undefined,
-                text: undefined,
-            });
-        });
     });
 
     test('conditional rendering', () => {
@@ -667,6 +654,143 @@ describe(jsx, () => {
     });
 
     describe('components', () => {
+        type Props = { prop: string | undefined; children?: Snabbdom.Node };
+        const Component: Snabbdom.Component<Props> = ({ prop, children }) => <div data-prop={prop}>{children}</div>;
+
+        test('w/ single string child', () => {
+            expect(<Component prop="foo">Hello, world!</Component>).toStrictEqual({
+                children: undefined,
+                data: {
+                    dataset: {
+                        prop: 'foo',
+                    },
+                },
+                elm: undefined,
+                key: undefined,
+                sel: 'div',
+                text: 'Hello, world!',
+            });
+        });
+
+        test('w/ single HTML child', () => {
+            expect(
+                <Component prop="foo">
+                    <span>Hello, world!</span>
+                </Component>,
+            ).toStrictEqual({
+                children: [
+                    {
+                        children: undefined,
+                        data: {},
+                        elm: undefined,
+                        key: undefined,
+                        sel: 'span',
+                        text: 'Hello, world!',
+                    },
+                ],
+                data: {
+                    dataset: {
+                        prop: 'foo',
+                    },
+                },
+                elm: undefined,
+                key: undefined,
+                sel: 'div',
+                text: undefined,
+            });
+        });
+
+        test('w/ multiple string children', () => {
+            expect(
+                <Component prop="foo">
+                    {'Hello,'}
+                    {'world!'}
+                </Component>,
+            ).toStrictEqual({
+                children: [
+                    {
+                        children: undefined,
+                        data: undefined,
+                        elm: undefined,
+                        key: undefined,
+                        sel: undefined,
+                        text: 'Hello,',
+                    },
+                    {
+                        children: undefined,
+                        data: undefined,
+                        elm: undefined,
+                        key: undefined,
+                        sel: undefined,
+                        text: 'world!',
+                    },
+                ],
+                data: {
+                    dataset: {
+                        prop: 'foo',
+                    },
+                },
+                elm: undefined,
+                key: undefined,
+                sel: 'div',
+                text: undefined,
+            });
+        });
+
+        test('w/ multiple mixed children', () => {
+            expect(
+                <Component prop="foo">
+                    Hello,
+                    <span>world!</span>
+                </Component>,
+            ).toStrictEqual({
+                children: [
+                    {
+                        children: undefined,
+                        data: undefined,
+                        elm: undefined,
+                        key: undefined,
+                        sel: undefined,
+                        text: 'Hello,',
+                    },
+                    {
+                        children: undefined,
+                        data: {},
+                        elm: undefined,
+                        key: undefined,
+                        sel: 'span',
+                        text: 'world!',
+                    },
+                ],
+                data: {
+                    dataset: {
+                        prop: 'foo',
+                    },
+                },
+                elm: undefined,
+                key: undefined,
+                sel: 'div',
+                text: undefined,
+            });
+        });
+
+        test('w/ key', () => {
+            expect(<Component $key="key" prop="foo" />).toStrictEqual({
+                children: undefined,
+                data: {
+                    dataset: {
+                        prop: 'foo',
+                    },
+                },
+                elm: undefined,
+                key: 'key',
+                sel: 'div',
+                text: undefined,
+            });
+        });
+    });
+
+    describe('components w/ legacy children', () => {
         type Props = { prop: string };
         const Component: Snabbdom.Component<Props> = ({ prop }, children) => <div data-prop={prop}>{children}</div>;
 
@@ -811,7 +935,7 @@ describe(jsx, () => {
         ).toStrictEqual({
             children: [
                 {
-                    children: [],
+                    children: undefined,
                     data: {
                         attrs: {
                             cx: '50',

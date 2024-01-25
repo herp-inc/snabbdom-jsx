@@ -16,7 +16,6 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
     const data: VNodeData = {};
 
     for (const key in orig) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const v = orig[key];
 
         if (v === undefined) {
@@ -24,26 +23,23 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
         }
 
         if (key === '$attrs' || key === 'attrs') {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.attrs = Object.assign(v, data.attrs ?? {});
         } else if (key.startsWith('aria-')) {
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.attrs ??= {};
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.attrs[key] = v;
+        } else if (key === 'children') {
+            // skip
         } else if (key === '$class' || key === 'class') {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.class = v;
         } else if (key === 'className' || key === 'id') {
             // skipping in favor of sel
         } else if (key === '$data' || key === 'data' || key === 'dataset') {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.dataset = Object.assign(v, data.dataset ?? {});
         } else if (key.startsWith('data-')) {
             const k = kebab2camel(key.replace('data-', ''));
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.dataset ??= {};
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.dataset[k] = v;
         } else if (key === '$hook' || key === 'hook') {
             data.hook = v;
@@ -65,7 +61,6 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
         } else if (key === 'list' || key === 'role') {
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.attrs ??= {};
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data.attrs[key] = v;
         } else if (key === '$style' || key === 'style') {
             data.style = v;
@@ -96,53 +91,57 @@ const considerSVG = (vnode: VNode): VNode => {
     };
 };
 
-const flatten = (children: Snabbdom.Node[], flattened: VNode[]): VNode[] => {
-    for (const child of children) {
-        if (Array.isArray(child)) {
-            flatten(child, flattened);
-        } else if (typeof child === 'string' || typeof child === 'number') {
-            flattened.push({
-                children: undefined,
-                data: undefined,
-                elm: undefined,
-                key: undefined,
-                sel: undefined,
-                text: String(child),
-            });
-        } else if (child === undefined || child === null || child === false || child === true) {
-            flattened.push({
-                children: undefined,
-                data: {},
-                elm: undefined,
-                key: undefined,
-                sel: '!',
-                text: String(child),
-            });
-        } else {
-            flattened.push(child);
-        }
+const vnodify = (child: Snabbdom.VNodeChildElement): VNode => {
+    if (typeof child === 'string' || typeof child === 'number') {
+        return {
+            children: undefined,
+            data: undefined,
+            elm: undefined,
+            key: undefined,
+            sel: undefined,
+            text: String(child),
+        };
     }
-    return flattened;
+
+    if (child === undefined || child === null || child === false || child === true) {
+        return {
+            children: undefined,
+            data: {},
+            elm: undefined,
+            key: undefined,
+            sel: '!',
+            text: String(child),
+        };
+    }
+
+    return child;
 };
 
-export const jsx = (
-    tag: string | Snabbdom.Component<unknown>,
-    data: Record<string, unknown> | null,
-    ...children: Snabbdom.Node[]
-): VNode => {
-    // eslint-disable-next-line no-param-reassign
-    data ??= {};
+export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unknown }, key?: Key): VNode => {
+    data['key'] = key;
 
-    const flatChildren = flatten(children, []);
+    const hasChildren = 'children' in data;
 
     // value-based elements
     if (typeof tag === 'function') {
-        let vnode = tag(data, flatChildren);
+        let vnode: VNode;
 
-        // when a primitive value is returned from the function component
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (typeof vnode !== 'object' || vnode === null) {
-            vnode = flatten([vnode], [])[0]!;
+        if (tag.length === 1) {
+            vnode = vnodify(tag(data));
+        } else {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            const { children: _, ...props } = data;
+            const children = data['children'] as Snabbdom.Node;
+            vnode = vnodify(
+                tag(
+                    props,
+                    hasChildren
+                        ? Array.isArray(children)
+                            ? children.flatMap((x) => (Array.isArray(x) ? x.map(vnodify) : vnodify(x)))
+                            : vnodify(children)
+                        : [],
+                ),
+            );
         }
 
         if (data['$key'] !== undefined) {
@@ -168,27 +167,113 @@ export const jsx = (
     }
 
     const canonicalizedData = canonicalizeVNodeData(data);
+    const children = data['children'] as Snabbdom.Node;
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (flatChildren.length === 1 && flatChildren[0]?.sel === undefined && typeof flatChildren[0]?.text !== undefined) {
-        return {
+    let vnode: VNode;
+
+    if (hasChildren) {
+        if (Array.isArray(children)) {
+            if (children.length === 1 && (typeof children[0] === 'number' || typeof children[0] === 'string')) {
+                vnode = {
+                    children: undefined,
+                    data: canonicalizedData,
+                    elm: undefined,
+                    sel,
+                    key: canonicalizedData.key,
+                    text: String(children[0]),
+                };
+            } else if (
+                children.length === 1 &&
+                typeof children[0] === 'object' &&
+                children[0] !== null &&
+                children[0].sel === undefined
+            ) {
+                vnode = {
+                    children: children[0].children,
+                    data: canonicalizedData,
+                    elm: undefined,
+                    sel,
+                    key: canonicalizedData.key,
+                    text: undefined,
+                };
+            } else {
+                vnode = {
+                    children: children.flatMap((x) => (Array.isArray(x) ? x.map(vnodify) : vnodify(x))),
+                    data: canonicalizedData,
+                    elm: undefined,
+                    sel,
+                    key: canonicalizedData.key,
+                    text: undefined,
+                };
+            }
+        } else if (children === undefined) {
+            vnode = {
+                children: undefined,
+                data: canonicalizedData,
+                elm: undefined,
+                sel,
+                key: canonicalizedData.key,
+                text: undefined,
+            };
+        } else if (typeof children === 'number' || typeof children === 'string') {
+            vnode = {
+                children: undefined,
+                data: canonicalizedData,
+                elm: undefined,
+                sel,
+                key: canonicalizedData.key,
+                text: String(children),
+            };
+        } else if (children === null || typeof children === 'boolean') {
+            vnode = {
+                children: [vnodify(children)],
+                data: canonicalizedData,
+                elm: undefined,
+                sel,
+                key: canonicalizedData.key,
+                text: undefined,
+            };
+        } else if (children.sel === undefined && typeof children.text === 'string') {
+            vnode = {
+                children: undefined,
+                data: canonicalizedData,
+                elm: undefined,
+                sel,
+                key: (data['$key'] as Key | undefined) ?? (data['key'] as Key | undefined),
+                text: children.text,
+            };
+        } else {
+            vnode = {
+                children: [children],
+                data: canonicalizedData,
+                elm: undefined,
+                sel,
+                key: (data['$key'] as Key | undefined) ?? (data['key'] as Key | undefined),
+                text: undefined,
+            };
+        }
+    } else {
+        vnode = {
             children: undefined,
             data: canonicalizedData,
             elm: undefined,
             sel,
-            key: undefined,
-            text: flatChildren[0]?.text,
+            key: canonicalizedData.key,
+            text: undefined,
         };
     }
 
-    const vnode: VNode = {
-        children: flatChildren,
-        data: canonicalizedData,
-        elm: undefined,
-        sel,
-        key: (data['$key'] as Key | undefined) ?? (data['key'] as Key | undefined),
-        text: undefined,
-    };
+    if (vnode.children !== undefined && vnode.children.length === 1) {
+        const child = vnode.children[0];
+
+        if (typeof child === 'string') {
+            vnode.text = child;
+            vnode.children = undefined;
+        } else if (typeof child === 'object' && child.sel === undefined && child.text !== undefined) {
+            vnode.text = child.text;
+            vnode.children = undefined;
+        }
+    }
 
     if (tag === 'svg') {
         return considerSVG(vnode);
@@ -197,9 +282,13 @@ export const jsx = (
     return vnode;
 };
 
-export function Fragment(_: Record<string, unknown>, ...children: Snabbdom.Node[]): VNode {
+export function jsxs(tag: string | JSX.ElementType, data: { [index: string]: unknown }): VNode {
+    return jsx(tag, data);
+}
+
+export function Fragment({ children }: { children: Snabbdom.Node }): VNode {
     return {
-        children: flatten(children, []),
+        children: children === undefined ? [] : [children].flat().map(vnodify),
         data: {},
         elm: undefined,
         sel: undefined,
@@ -317,6 +406,7 @@ declare namespace Internal {
          * @deprecated Use `$attrs` attribute instead.
          */
         attrs?: Attrs;
+        children?: ArrayOrElement<Snabbdom.Node>;
         /**
          * @deprecated Use `$class` attribute instead.
          */
@@ -1106,9 +1196,10 @@ declare namespace Internal {
     }
 }
 
-declare namespace Snabbdom {
+export declare namespace Snabbdom {
     type Component<Props> = (this: void, props: Readonly<Props>, children?: Node) => VNode;
-    type Node = ArrayOrElement<boolean | null | number | string | undefined | VNode>;
+    type Node = ArrayOrElement<VNodeChildElement>;
+    type VNodeChildElement = boolean | null | number | string | undefined | VNode;
 }
 // eslint-disable-next-line import/no-default-export
 export default Snabbdom;
@@ -1122,198 +1213,203 @@ export declare namespace jsx {
         on: On;
         style: Internal.Style;
     }
+}
 
-    namespace JSX {
-        /**
-         * @deprecated
-         */
-        type Element = VNode;
+export declare namespace JSX {
+    interface ElementChildrenAttribute {
+        children: unknown;
+    }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type ElementType = keyof IntrinsicElements | ((props: any, children?: VNode[]) => Snabbdom.Node);
+    /**
+     * @deprecated
+     */
+    type Element = VNode;
 
-        type IntrinsicAttributes = {
-            $key?: Key;
-        };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    type ElementType = keyof IntrinsicElements | ((props: any, children?: Snabbdom.Node) => Snabbdom.VNodeChildElement);
 
-        interface IntrinsicElements {
-            // HTML
-            a: Internal.HTMLElementProps<HTMLAnchorElement, Internal.HTMLAnchorElement.Props>;
-            abbr: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            address: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            area: Internal.HTMLElementProps<HTMLAreaElement, Internal.HTMLAreaElement.Props>;
-            article: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            aside: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            audio: Internal.HTMLElementProps<HTMLAudioElement, Internal.HTMLAudioElement.Props>;
-            b: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            base: Internal.HTMLElementProps<HTMLBaseElement, Internal.HTMLBaseElement.Props>;
-            bdi: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            bdo: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            big: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            blockquote: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            body: Internal.HTMLElementProps<HTMLBodyElement, Internal.HTMLBodyElement.Props>;
-            br: Internal.HTMLElementProps<HTMLBRElement, Internal.HTMLBRElement.Props>;
-            button: Internal.HTMLElementProps<HTMLButtonElement, Internal.HTMLButtonElement.Props>;
-            canvas: Internal.HTMLElementProps<HTMLCanvasElement, Internal.HTMLCanvasElement.Props>;
-            caption: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            cite: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            code: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            col: Internal.HTMLElementProps<HTMLTableColElement, Internal.HTMLTableColElement.Props>;
-            colgroup: Internal.HTMLElementProps<HTMLTableColElement, Internal.HTMLTableColElement.Props>;
-            data: Internal.HTMLElementProps<HTMLDataElement, Internal.HTMLDataElement.Props>;
-            datalist: Internal.HTMLElementProps<HTMLDataListElement, Internal.HTMLDataListElement.Props>;
-            dd: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            del: Internal.HTMLElementProps<HTMLModElement, Internal.HTMLModElement.Props>;
-            details: Internal.HTMLElementProps<HTMLDetailsElement, Internal.HTMLDetailsElement.Props>;
-            dfn: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            dialog: Internal.HTMLElementProps<HTMLDialogElement, Internal.HTMLDialogElement.Props>;
-            div: Internal.HTMLElementProps<HTMLDivElement, Internal.HTMLDivElement.Props>;
-            dl: Internal.HTMLElementProps<HTMLDListElement, Internal.HTMLDListElement.Props>;
-            dt: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            em: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            embed: Internal.HTMLElementProps<HTMLEmbedElement, Internal.HTMLEmbedElement.Props>;
-            fieldset: Internal.HTMLElementProps<HTMLFieldSetElement, Internal.HTMLFieldSetElement.Props>;
-            figcaption: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            figure: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            footer: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            form: Internal.HTMLElementProps<HTMLFormElement, Internal.HTMLFormElement.Props>;
-            h1: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
-            h2: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
-            h3: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
-            h4: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
-            h5: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
-            h6: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
-            head: Internal.HTMLElementProps<HTMLHeadElement, Internal.HTMLHeadElement.Props>;
-            header: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            hgroup: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            hr: Internal.HTMLElementProps<HTMLHRElement, Internal.HTMLHRElement.Props>;
-            html: Internal.HTMLElementProps<HTMLHtmlElement, Internal.HTMLHtmlElement.Props>;
-            i: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            iframe: Internal.HTMLElementProps<HTMLIFrameElement, Internal.HTMLIFrameElement.Props>;
-            img: Internal.HTMLElementProps<HTMLImageElement, Internal.HTMLImageElement.Props>;
-            input: Internal.HTMLElementProps<HTMLInputElement, Internal.HTMLInputElement.Props>;
-            ins: Internal.HTMLElementProps<HTMLModElement, Internal.HTMLModElement.Props>;
-            kbd: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            keygen: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            label: Internal.HTMLElementProps<HTMLLabelElement, Internal.HTMLLabelElement.Props>;
-            legend: Internal.HTMLElementProps<HTMLLegendElement, Internal.HTMLLegendElement.Props>;
-            li: Internal.HTMLElementProps<HTMLLIElement, Internal.HTMLLIElement.Props>;
-            link: Internal.HTMLElementProps<HTMLLinkElement, Internal.HTMLLinkElement.Props>;
-            main: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            map: Internal.HTMLElementProps<HTMLMapElement, Internal.HTMLMapElement.Props>;
-            mark: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            menu: Internal.HTMLElementProps<HTMLMenuElement, Internal.HTMLMenuElement.Props>;
-            menuitem: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            meta: Internal.HTMLElementProps<HTMLMetaElement, Internal.HTMLMetaElement.Props>;
-            meter: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            nav: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            noindex: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            noscript: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            object: Internal.HTMLElementProps<HTMLObjectElement, Internal.HTMLObjectElement.Props>;
-            ol: Internal.HTMLElementProps<HTMLOListElement, Internal.HTMLOListElement.Props>;
-            optgroup: Internal.HTMLElementProps<HTMLOptGroupElement, Internal.HTMLOptGroupElement.Props>;
-            option: Internal.HTMLElementProps<HTMLOptionElement, Internal.HTMLOptionElement.Props>;
-            output: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            p: Internal.HTMLElementProps<HTMLParagraphElement, Internal.HTMLParagraphElement.Props>;
-            param: Internal.HTMLElementProps<HTMLParamElement, Internal.HTMLParamElement.Props>;
-            picture: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            pre: Internal.HTMLElementProps<HTMLPreElement, Internal.HTMLPreElement.Props>;
-            progress: Internal.HTMLElementProps<HTMLProgressElement, Internal.HTMLProgressElement.Props>;
-            q: Internal.HTMLElementProps<HTMLQuoteElement, Internal.HTMLQuoteElement.Props>;
-            rp: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            rt: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            ruby: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            s: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            samp: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            slot: Internal.HTMLElementProps<HTMLSlotElement, Internal.HTMLSlotElement.Props>;
-            script: Internal.HTMLElementProps<HTMLScriptElement, Internal.HTMLScriptElement.Props>;
-            section: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            select: Internal.HTMLElementProps<HTMLSelectElement, Internal.HTMLSelectElement.Props>;
-            small: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            source: Internal.HTMLElementProps<HTMLSourceElement, Internal.HTMLSourceElement.Props>;
-            span: Internal.HTMLElementProps<HTMLSpanElement, Internal.HTMLSpanElement.Props>;
-            strong: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            style: Internal.HTMLElementProps<HTMLStyleElement, Internal.HTMLStyleElement.Props>;
-            sub: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            summary: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            sup: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            table: Internal.HTMLElementProps<HTMLTableElement, Internal.HTMLTableElement.Props>;
-            template: Internal.HTMLElementProps<HTMLTemplateElement, Internal.HTMLTemplateElement.Props>;
-            tbody: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
-            td: Internal.HTMLElementProps<HTMLTableDataCellElement, Internal.HTMLTableDataCellElement.Props>;
-            textarea: Internal.HTMLElementProps<HTMLTextAreaElement, Internal.HTMLTextAreaElement.Props>;
-            tfoot: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
-            th: Internal.HTMLElementProps<HTMLTableHeaderCellElement, Internal.HTMLTableHeaderCellElement.Props>;
-            thead: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
-            time: Internal.HTMLElementProps<HTMLTimeElement, Internal.HTMLTimeElement.Props>;
-            title: Internal.HTMLElementProps<HTMLTitleElement, Internal.HTMLTitleElement.Props>;
-            tr: Internal.HTMLElementProps<HTMLTableRowElement, Internal.HTMLTableRowElement.Props>;
-            track: Internal.HTMLElementProps<HTMLTrackElement, Internal.HTMLTrackElement.Props>;
-            u: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            ul: Internal.HTMLElementProps<HTMLUListElement, Internal.HTMLUListElement.Props>;
-            var: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
-            video: Internal.HTMLElementProps<HTMLVideoElement, Internal.HTMLVideoElement.Props>;
-            wbr: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+    type IntrinsicAttributes = {
+        $key?: Key;
+        children?: unknown;
+    };
 
-            // SVG
-            animate: Internal.SVGElementProps<SVGAnimateElement>;
-            animateMotion: Internal.SVGElementProps<SVGElement>;
-            animateTransform: Internal.SVGElementProps<SVGAnimateTransformElement>;
-            circle: Internal.SVGElementProps<SVGCircleElement>;
-            clipPath: Internal.SVGElementProps<SVGClipPathElement>;
-            defs: Internal.SVGElementProps<SVGDefsElement>;
-            desc: Internal.SVGElementProps<SVGDescElement>;
-            ellipse: Internal.SVGElementProps<SVGEllipseElement>;
-            feBlend: Internal.SVGElementProps<SVGFEBlendElement>;
-            feColorMatrix: Internal.SVGElementProps<SVGFEColorMatrixElement>;
-            feComponentTransfer: Internal.SVGElementProps<SVGFEComponentTransferElement>;
-            feComposite: Internal.SVGElementProps<SVGFECompositeElement>;
-            feConvolveMatrix: Internal.SVGElementProps<SVGFEConvolveMatrixElement>;
-            feDiffuseLighting: Internal.SVGElementProps<SVGFEDiffuseLightingElement>;
-            feDisplacementMap: Internal.SVGElementProps<SVGFEDisplacementMapElement>;
-            feDistantLight: Internal.SVGElementProps<SVGFEDistantLightElement>;
-            feDropShadow: Internal.SVGElementProps<SVGFEDropShadowElement>;
-            feFlood: Internal.SVGElementProps<SVGFEFloodElement>;
-            feFuncA: Internal.SVGElementProps<SVGFEFuncAElement>;
-            feFuncB: Internal.SVGElementProps<SVGFEFuncBElement>;
-            feFuncG: Internal.SVGElementProps<SVGFEFuncGElement>;
-            feFuncR: Internal.SVGElementProps<SVGFEFuncRElement>;
-            feGaussianBlur: Internal.SVGElementProps<SVGFEGaussianBlurElement>;
-            feImage: Internal.SVGElementProps<SVGFEImageElement>;
-            feMerge: Internal.SVGElementProps<SVGFEMergeElement>;
-            feMergeNode: Internal.SVGElementProps<SVGFEMergeNodeElement>;
-            feMorphology: Internal.SVGElementProps<SVGFEMorphologyElement>;
-            feOffset: Internal.SVGElementProps<SVGFEOffsetElement>;
-            fePointLight: Internal.SVGElementProps<SVGFEPointLightElement>;
-            feSpecularLighting: Internal.SVGElementProps<SVGFESpecularLightingElement>;
-            feSpotLight: Internal.SVGElementProps<SVGFESpotLightElement>;
-            feTile: Internal.SVGElementProps<SVGFETileElement>;
-            feTurbulence: Internal.SVGElementProps<SVGFETurbulenceElement>;
-            filter: Internal.SVGElementProps<SVGFilterElement>;
-            foreignObject: Internal.SVGElementProps<SVGForeignObjectElement>;
-            g: Internal.SVGElementProps<SVGGElement>;
-            image: Internal.SVGElementProps<SVGImageElement>;
-            line: Internal.SVGElementProps<SVGLineElement>;
-            linearGradient: Internal.SVGElementProps<SVGLinearGradientElement>;
-            marker: Internal.SVGElementProps<SVGMarkerElement>;
-            mask: Internal.SVGElementProps<SVGMaskElement>;
-            metadata: Internal.SVGElementProps<SVGMetadataElement>;
-            mpath: Internal.SVGElementProps<SVGElement>;
-            path: Internal.SVGElementProps<SVGPathElement>;
-            pattern: Internal.SVGElementProps<SVGPatternElement>;
-            polygon: Internal.SVGElementProps<SVGPolygonElement>;
-            polyline: Internal.SVGElementProps<SVGPolylineElement>;
-            radialGradient: Internal.SVGElementProps<SVGRadialGradientElement>;
-            rect: Internal.SVGElementProps<SVGRectElement>;
-            stop: Internal.SVGElementProps<SVGStopElement>;
-            svg: Internal.SVGElementProps<SVGSVGElement>;
-            switch: Internal.SVGElementProps<SVGSwitchElement>;
-            symbol: Internal.SVGElementProps<SVGSymbolElement>;
-            text: Internal.SVGElementProps<SVGTextElement>;
-            textPath: Internal.SVGElementProps<SVGTextPathElement>;
-            tspan: Internal.SVGElementProps<SVGTSpanElement>;
-            use: Internal.SVGElementProps<SVGUseElement>;
-            view: Internal.SVGElementProps<SVGViewElement>;
-        }
+    interface IntrinsicElements {
+        // HTML
+        a: Internal.HTMLElementProps<HTMLAnchorElement, Internal.HTMLAnchorElement.Props>;
+        abbr: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        address: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        area: Internal.HTMLElementProps<HTMLAreaElement, Internal.HTMLAreaElement.Props>;
+        article: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        aside: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        audio: Internal.HTMLElementProps<HTMLAudioElement, Internal.HTMLAudioElement.Props>;
+        b: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        base: Internal.HTMLElementProps<HTMLBaseElement, Internal.HTMLBaseElement.Props>;
+        bdi: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        bdo: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        big: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        blockquote: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        body: Internal.HTMLElementProps<HTMLBodyElement, Internal.HTMLBodyElement.Props>;
+        br: Internal.HTMLElementProps<HTMLBRElement, Internal.HTMLBRElement.Props>;
+        button: Internal.HTMLElementProps<HTMLButtonElement, Internal.HTMLButtonElement.Props>;
+        canvas: Internal.HTMLElementProps<HTMLCanvasElement, Internal.HTMLCanvasElement.Props>;
+        caption: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        cite: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        code: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        col: Internal.HTMLElementProps<HTMLTableColElement, Internal.HTMLTableColElement.Props>;
+        colgroup: Internal.HTMLElementProps<HTMLTableColElement, Internal.HTMLTableColElement.Props>;
+        data: Internal.HTMLElementProps<HTMLDataElement, Internal.HTMLDataElement.Props>;
+        datalist: Internal.HTMLElementProps<HTMLDataListElement, Internal.HTMLDataListElement.Props>;
+        dd: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        del: Internal.HTMLElementProps<HTMLModElement, Internal.HTMLModElement.Props>;
+        details: Internal.HTMLElementProps<HTMLDetailsElement, Internal.HTMLDetailsElement.Props>;
+        dfn: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        dialog: Internal.HTMLElementProps<HTMLDialogElement, Internal.HTMLDialogElement.Props>;
+        div: Internal.HTMLElementProps<HTMLDivElement, Internal.HTMLDivElement.Props>;
+        dl: Internal.HTMLElementProps<HTMLDListElement, Internal.HTMLDListElement.Props>;
+        dt: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        em: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        embed: Internal.HTMLElementProps<HTMLEmbedElement, Internal.HTMLEmbedElement.Props>;
+        fieldset: Internal.HTMLElementProps<HTMLFieldSetElement, Internal.HTMLFieldSetElement.Props>;
+        figcaption: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        figure: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        footer: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        form: Internal.HTMLElementProps<HTMLFormElement, Internal.HTMLFormElement.Props>;
+        h1: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
+        h2: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
+        h3: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
+        h4: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
+        h5: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
+        h6: Internal.HTMLElementProps<HTMLHeadingElement, Internal.HTMLHeadingElement.Props>;
+        head: Internal.HTMLElementProps<HTMLHeadElement, Internal.HTMLHeadElement.Props>;
+        header: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        hgroup: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        hr: Internal.HTMLElementProps<HTMLHRElement, Internal.HTMLHRElement.Props>;
+        html: Internal.HTMLElementProps<HTMLHtmlElement, Internal.HTMLHtmlElement.Props>;
+        i: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        iframe: Internal.HTMLElementProps<HTMLIFrameElement, Internal.HTMLIFrameElement.Props>;
+        img: Internal.HTMLElementProps<HTMLImageElement, Internal.HTMLImageElement.Props>;
+        input: Internal.HTMLElementProps<HTMLInputElement, Internal.HTMLInputElement.Props>;
+        ins: Internal.HTMLElementProps<HTMLModElement, Internal.HTMLModElement.Props>;
+        kbd: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        keygen: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        label: Internal.HTMLElementProps<HTMLLabelElement, Internal.HTMLLabelElement.Props>;
+        legend: Internal.HTMLElementProps<HTMLLegendElement, Internal.HTMLLegendElement.Props>;
+        li: Internal.HTMLElementProps<HTMLLIElement, Internal.HTMLLIElement.Props>;
+        link: Internal.HTMLElementProps<HTMLLinkElement, Internal.HTMLLinkElement.Props>;
+        main: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        map: Internal.HTMLElementProps<HTMLMapElement, Internal.HTMLMapElement.Props>;
+        mark: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        menu: Internal.HTMLElementProps<HTMLMenuElement, Internal.HTMLMenuElement.Props>;
+        menuitem: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        meta: Internal.HTMLElementProps<HTMLMetaElement, Internal.HTMLMetaElement.Props>;
+        meter: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        nav: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        noindex: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        noscript: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        object: Internal.HTMLElementProps<HTMLObjectElement, Internal.HTMLObjectElement.Props>;
+        ol: Internal.HTMLElementProps<HTMLOListElement, Internal.HTMLOListElement.Props>;
+        optgroup: Internal.HTMLElementProps<HTMLOptGroupElement, Internal.HTMLOptGroupElement.Props>;
+        option: Internal.HTMLElementProps<HTMLOptionElement, Internal.HTMLOptionElement.Props>;
+        output: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        p: Internal.HTMLElementProps<HTMLParagraphElement, Internal.HTMLParagraphElement.Props>;
+        param: Internal.HTMLElementProps<HTMLParamElement, Internal.HTMLParamElement.Props>;
+        picture: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        pre: Internal.HTMLElementProps<HTMLPreElement, Internal.HTMLPreElement.Props>;
+        progress: Internal.HTMLElementProps<HTMLProgressElement, Internal.HTMLProgressElement.Props>;
+        q: Internal.HTMLElementProps<HTMLQuoteElement, Internal.HTMLQuoteElement.Props>;
+        rp: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        rt: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        ruby: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        s: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        samp: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        slot: Internal.HTMLElementProps<HTMLSlotElement, Internal.HTMLSlotElement.Props>;
+        script: Internal.HTMLElementProps<HTMLScriptElement, Internal.HTMLScriptElement.Props>;
+        section: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        select: Internal.HTMLElementProps<HTMLSelectElement, Internal.HTMLSelectElement.Props>;
+        small: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        source: Internal.HTMLElementProps<HTMLSourceElement, Internal.HTMLSourceElement.Props>;
+        span: Internal.HTMLElementProps<HTMLSpanElement, Internal.HTMLSpanElement.Props>;
+        strong: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        style: Internal.HTMLElementProps<HTMLStyleElement, Internal.HTMLStyleElement.Props>;
+        sub: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        summary: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        sup: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        table: Internal.HTMLElementProps<HTMLTableElement, Internal.HTMLTableElement.Props>;
+        template: Internal.HTMLElementProps<HTMLTemplateElement, Internal.HTMLTemplateElement.Props>;
+        tbody: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
+        td: Internal.HTMLElementProps<HTMLTableCellElement, Internal.HTMLTableDataCellElement.Props>;
+        textarea: Internal.HTMLElementProps<HTMLTextAreaElement, Internal.HTMLTextAreaElement.Props>;
+        tfoot: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
+        th: Internal.HTMLElementProps<HTMLTableCellElement, Internal.HTMLTableHeaderCellElement.Props>;
+        thead: Internal.HTMLElementProps<HTMLTableSectionElement, Internal.HTMLTableSectionElement.Props>;
+        time: Internal.HTMLElementProps<HTMLTimeElement, Internal.HTMLTimeElement.Props>;
+        title: Internal.HTMLElementProps<HTMLTitleElement, Internal.HTMLTitleElement.Props>;
+        tr: Internal.HTMLElementProps<HTMLTableRowElement, Internal.HTMLTableRowElement.Props>;
+        track: Internal.HTMLElementProps<HTMLTrackElement, Internal.HTMLTrackElement.Props>;
+        u: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        ul: Internal.HTMLElementProps<HTMLUListElement, Internal.HTMLUListElement.Props>;
+        var: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+        video: Internal.HTMLElementProps<HTMLVideoElement, Internal.HTMLVideoElement.Props>;
+        wbr: Internal.HTMLElementProps<HTMLElement, Internal.HTMLElement.Props>;
+
+        // SVG
+        animate: Internal.SVGElementProps<SVGAnimateElement>;
+        animateMotion: Internal.SVGElementProps<SVGElement>;
+        animateTransform: Internal.SVGElementProps<SVGAnimateTransformElement>;
+        circle: Internal.SVGElementProps<SVGCircleElement>;
+        clipPath: Internal.SVGElementProps<SVGClipPathElement>;
+        defs: Internal.SVGElementProps<SVGDefsElement>;
+        desc: Internal.SVGElementProps<SVGDescElement>;
+        ellipse: Internal.SVGElementProps<SVGEllipseElement>;
+        feBlend: Internal.SVGElementProps<SVGFEBlendElement>;
+        feColorMatrix: Internal.SVGElementProps<SVGFEColorMatrixElement>;
+        feComponentTransfer: Internal.SVGElementProps<SVGFEComponentTransferElement>;
+        feComposite: Internal.SVGElementProps<SVGFECompositeElement>;
+        feConvolveMatrix: Internal.SVGElementProps<SVGFEConvolveMatrixElement>;
+        feDiffuseLighting: Internal.SVGElementProps<SVGFEDiffuseLightingElement>;
+        feDisplacementMap: Internal.SVGElementProps<SVGFEDisplacementMapElement>;
+        feDistantLight: Internal.SVGElementProps<SVGFEDistantLightElement>;
+        feDropShadow: Internal.SVGElementProps<SVGFEDropShadowElement>;
+        feFlood: Internal.SVGElementProps<SVGFEFloodElement>;
+        feFuncA: Internal.SVGElementProps<SVGFEFuncAElement>;
+        feFuncB: Internal.SVGElementProps<SVGFEFuncBElement>;
+        feFuncG: Internal.SVGElementProps<SVGFEFuncGElement>;
+        feFuncR: Internal.SVGElementProps<SVGFEFuncRElement>;
+        feGaussianBlur: Internal.SVGElementProps<SVGFEGaussianBlurElement>;
+        feImage: Internal.SVGElementProps<SVGFEImageElement>;
+        feMerge: Internal.SVGElementProps<SVGFEMergeElement>;
+        feMergeNode: Internal.SVGElementProps<SVGFEMergeNodeElement>;
+        feMorphology: Internal.SVGElementProps<SVGFEMorphologyElement>;
+        feOffset: Internal.SVGElementProps<SVGFEOffsetElement>;
+        fePointLight: Internal.SVGElementProps<SVGFEPointLightElement>;
+        feSpecularLighting: Internal.SVGElementProps<SVGFESpecularLightingElement>;
+        feSpotLight: Internal.SVGElementProps<SVGFESpotLightElement>;
+        feTile: Internal.SVGElementProps<SVGFETileElement>;
+        feTurbulence: Internal.SVGElementProps<SVGFETurbulenceElement>;
+        filter: Internal.SVGElementProps<SVGFilterElement>;
+        foreignObject: Internal.SVGElementProps<SVGForeignObjectElement>;
+        g: Internal.SVGElementProps<SVGGElement>;
+        image: Internal.SVGElementProps<SVGImageElement>;
+        line: Internal.SVGElementProps<SVGLineElement>;
+        linearGradient: Internal.SVGElementProps<SVGLinearGradientElement>;
+        marker: Internal.SVGElementProps<SVGMarkerElement>;
+        mask: Internal.SVGElementProps<SVGMaskElement>;
+        metadata: Internal.SVGElementProps<SVGMetadataElement>;
+        mpath: Internal.SVGElementProps<SVGElement>;
+        path: Internal.SVGElementProps<SVGPathElement>;
+        pattern: Internal.SVGElementProps<SVGPatternElement>;
+        polygon: Internal.SVGElementProps<SVGPolygonElement>;
+        polyline: Internal.SVGElementProps<SVGPolylineElement>;
+        radialGradient: Internal.SVGElementProps<SVGRadialGradientElement>;
+        rect: Internal.SVGElementProps<SVGRectElement>;
+        stop: Internal.SVGElementProps<SVGStopElement>;
+        svg: Internal.SVGElementProps<SVGSVGElement>;
+        switch: Internal.SVGElementProps<SVGSwitchElement>;
+        symbol: Internal.SVGElementProps<SVGSymbolElement>;
+        text: Internal.SVGElementProps<SVGTextElement>;
+        textPath: Internal.SVGElementProps<SVGTextPathElement>;
+        tspan: Internal.SVGElementProps<SVGTSpanElement>;
+        use: Internal.SVGElementProps<SVGUseElement>;
+        view: Internal.SVGElementProps<SVGViewElement>;
     }
 }
