@@ -13,8 +13,6 @@ Yet another [JSX](https://facebook.github.io/jsx/) pragma for [Snabbdom](https:/
 ## Example
 
 ```tsx
-import { jsx } from '@herp-inc/snabbdom-jsx';
-
 const vnode = (
   <div id="container" className="two classes" onclick={someFn}>
     <span $style={{ fontWeight: 'bold' }}>This is bold</span> and this is just normal text
