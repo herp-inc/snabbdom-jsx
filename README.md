@@ -58,43 +58,7 @@ const patch = init(modules, undefined, {
 
 ### With [TypeScript](https://www.typescriptlang.org/)
 
-#### Classic runtime
-
 Add the following options to your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "jsx": "react",
-    "jsxFactory": "jsx",
-    "jsxFragmentFactory": "Fragment"
-  }
-}
-```
-
-Then import the `jsx` function in your `.tsx` file.
-
-```tsx
-import { jsx } from '@herp-inc/snabbdom-jsx';
-
-const vnode = <div>Hello, JSX!</div>;
-```
-
-When you want to use a JSX fragment, you also have to import the `Fragment` function.
-
-```tsx
-import { Fragment, jsx } from '@herp-inc/snabbdom-jsx';
-
-const vnode = (
-  <>
-    Hello, <strong>JSX</strong>!
-  </>
-);
-```
-
-#### Automatic runtime
-
-Make sure you are using TypeScript v4.1+ and add the following options to your `tsconfig.json`:
 
 ```json
 {
@@ -105,52 +69,9 @@ Make sure you are using TypeScript v4.1+ and add the following options to your `
 }
 ```
 
-Then the `jsx` and the `jsxs` functions will automatically be imported.
-
 ### With [Babel](https://babeljs.io/)
 
 Add [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx) to your `devDependencies`.
-
-#### Classic runtime
-
-Make sure are using Babel v7.9.0+ and add the following options to your Babel configuration:
-
-```json
-{
-  "plugins": [
-    [
-      "@babel/plugin-transform-react-jsx",
-      {
-        "pragma": "jsx",
-        "pragmaFrag": "Fragment",
-        "runtime": "classic"
-      }
-    ]
-  ]
-}
-```
-
-Then import the `jsx` function in your file.
-
-```jsx
-import { jsx } from '@herp-inc/snabbdom-jsx';
-
-const vnode = <div>Hello, JSX!</div>;
-```
-
-When you want to use a JSX fragment, you also have to import the `Fragment` function.
-
-```tsx
-import { Fragment, jsx } from '@herp-inc/snabbdom-jsx';
-
-const vnode = (
-  <>
-    Hello, <strong>JSX</strong>!
-  </>
-);
-```
-
-#### Automatic runtime
 
 Add the following options to your Babel configuration:
 
@@ -167,8 +88,6 @@ Add the following options to your Babel configuration:
   ]
 }
 ```
-
-Then the `jsx` and the `jsxs` functions will automatically be imported.
 
 ## Attributes mapping
 
@@ -343,7 +262,7 @@ Just like built-in modules, you can pass an arbitrary value to your custom modul
 Unlike built-in modules, we have no assumptions about what kind of values should be passed to custom modules. You have to augment `jsx.CustomModules` interface so that it will typecheck.
 
 ```ts
-declare module '@herp-inc/snabbdom-jsx' {
+declare module '@herp-inc/snabbdom-jsx/jsx-runtime' {
   namespace jsx {
     interface CustomModules {
       // Add your custom modules here
@@ -357,16 +276,17 @@ declare module '@herp-inc/snabbdom-jsx' {
 
 ## Components
 
-A component can be defined with a function with the signature of `<Props>(props: Props, children: Snabbdom.Node[]) => Snabbdom.Node`.
+A component can be defined with a function with the signature of `<Props>(props: Props) => Snabbdom.VNodeChildElement`.
 
 ```tsx
 import Snabbdom, { jsx } from '@herp-inc/snabbdom-jsx';
 
 type Props = {
+  children: Snabbdom.Node;
   name: string;
 };
 
-const Component: Snabbdom.Component<Props> = ({ name }, children) => (
+const Component: Snabbdom.Component<Props> = ({ children, name }) => (
   <div>
     Hello, {name}!<div>{children}</div>
   </div>

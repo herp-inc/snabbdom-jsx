@@ -3,9 +3,8 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
-    "jsx": "react",
-    "jsxFactory": "jsx",
-    "jsxFragmentFactory": "Fragment",
+    "jsx": "react-jsx",
+    "jsxImportSource": ".",
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "dist",
