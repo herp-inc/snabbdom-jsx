@@ -11,6 +11,7 @@ pkgs.stdenv.mkDerivation rec {
   src = pkgs.nix-gitignore.gitignoreSource [] ./.;
 
   buildInputs = [
+    pkgs.cacert
     pkgs.nodejs-slim
     pkgs.yarn
   ];
