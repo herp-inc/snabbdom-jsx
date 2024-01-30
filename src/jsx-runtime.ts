@@ -1,5 +1,7 @@
 import type * as CSS from 'csstype';
-import type { ArrayOrElement, Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode, VNodeData } from 'snabbdom';
+import type { Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode, VNodeData } from 'snabbdom';
+
+type ArrayOrElement<T> = T | readonly T[];
 
 const kebab2camel = (kebab: string): string => {
     const [hd, ...tl] = kebab.split('-');
