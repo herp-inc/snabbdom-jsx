@@ -4,11 +4,14 @@ Yet another [JSX](https://facebook.github.io/jsx/) pragma for [Snabbdom](https:/
 
 ## Features
 
-- Straightforward and intuitive syntax: `<input type="text" />` rather than `<input props={{ type: 'text' }}>`
-- Attributes on intrinsic elements are typechecked (only for HTML elements for now)
-- `className` and `id` will be the part of the `sel`
-- Type-safe custom modules via module augmentation
-- Support for [React 17 style new JSX transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
+- Straightforward and intuitive syntax
+  - `<input type="text" />` rather than `<input props={{ type: 'text' }}>`
+- Typechecked attributes on intrinsic elements
+  - Only for HTML elements for now
+- Typechecked children
+- `className` and `id` will be the part of the [`sel`](https://github.com/snabbdom/snabbdom#sel--string)
+- [Type-safe custom modules via module augmentation](#custom-modules)
+- Support for [React 17 style automatic runtime](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 
 ## Example
 
@@ -257,7 +260,7 @@ Just like built-in modules, you can pass an arbitrary value to your custom modul
 
 #### Note for TypeScript users
 
-Unlike built-in modules, we have no assumptions about what kind of values should be passed to custom modules. You have to augment `jsx.CustomModules` interface so that it will typecheck.
+Unlike built-in modules, we have no assumptions on what kind of values should be passed to custom modules. You have to augment `jsx.CustomModules` interface so that it will typecheck.
 
 ```ts
 declare module '@herp-inc/snabbdom-jsx/jsx-runtime' {
@@ -274,10 +277,10 @@ declare module '@herp-inc/snabbdom-jsx/jsx-runtime' {
 
 ## Components
 
-A component can be defined with a function with the signature of `<Props>(props: Props) => Snabbdom.VNodeChildElement`.
+A JSX component can be defined with a function with the signature of `<Props>(props: Props) => Snabbdom.VNodeChildElement`.
 
 ```tsx
-import Snabbdom, { jsx } from '@herp-inc/snabbdom-jsx';
+import type Snabbdom from '@herp-inc/snabbdom-jsx';
 
 type Props = {
   children: Snabbdom.Node;
@@ -295,7 +298,7 @@ const vnode = <Component />;
 
 ## Caveats
 
-- `boolean`, `null`, and `undefined` values are not be filtered out of the tree and rendered as comment nodes (for the sake of correct diffing)
+- `boolean`, `null`, and `undefined` values are not be filtered out of the tree but rendered as comment nodes (for the sake of correct diffing)
 - `snabbdom-pragma`-style `MODULE-PROPERTY` notation is not supported.
 
 ## Acknowledgements
