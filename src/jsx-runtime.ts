@@ -3,6 +3,9 @@ import type { Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode, VNodeData }
 
 type ArrayOrElement<T> = T | readonly T[];
 
+const isArrayChildren = (children: Snabbdom.Node): children is readonly Snabbdom.VNodeChildElement[] =>
+    Array.isArray(children);
+
 const kebab2camel = (kebab: string): string => {
     const [hd, ...tl] = kebab.split('-');
     let camel = hd ?? '';
@@ -138,7 +141,7 @@ export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unkn
                 tag(
                     props,
                     hasChildren
-                        ? Array.isArray(children)
+                        ? isArrayChildren(children)
                             ? children.flatMap((x) => (Array.isArray(x) ? x.map(vnodify) : vnodify(x)))
                             : vnodify(children)
                         : [],
@@ -174,7 +177,7 @@ export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unkn
     let vnode: VNode;
 
     if (hasChildren) {
-        if (Array.isArray(children)) {
+        if (isArrayChildren(children)) {
             if (children.length === 1 && (typeof children[0] === 'number' || typeof children[0] === 'string')) {
                 vnode = {
                     children: undefined,
