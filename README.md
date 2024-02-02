@@ -263,7 +263,7 @@ Just like built-in modules, you can pass an arbitrary value to your custom modul
 Unlike built-in modules, we have no assumptions on what kind of values should be passed to custom modules. You have to augment `jsx.CustomModules` interface so that it will typecheck.
 
 ```ts
-declare module '@herp-inc/snabbdom-jsx/jsx-runtime' {
+declare module '@herp-inc/snabbdom-jsx' {
   namespace jsx {
     interface CustomModules {
       // Add your custom modules here
