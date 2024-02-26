@@ -3,8 +3,6 @@ import type { Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode } from 'snab
 
 import type { jsx } from './index';
 
-export type ArrayOrElement<T> = T | readonly T[];
-
 export declare namespace Internal {
     // eslint-disable-next-line @typescript-eslint/ban-types
     type Whatever = string & {};
@@ -114,7 +112,7 @@ export declare namespace Internal {
          * @deprecated Use `$attrs` attribute instead.
          */
         attrs?: Attrs;
-        children?: ArrayOrElement<Snabbdom.Node>;
+        children?: Snabbdom.Node;
         /**
          * @deprecated Use `$class` attribute instead.
          */
@@ -906,7 +904,7 @@ export declare namespace Internal {
 
 declare namespace Snabbdom {
     type Component<Props> = (this: void, props: Readonly<Props>, children?: Node) => VNode;
-    type Node = ArrayOrElement<VNodeChildElement>;
+    type Node = VNodeChildElement | readonly Node[];
     type VNodeChildElement = boolean | null | number | string | undefined | VNode;
 }
 // eslint-disable-next-line import/no-default-export

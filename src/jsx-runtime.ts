@@ -3,8 +3,7 @@ import type { Key, VNode, VNodeData } from 'snabbdom';
 import type Snabbdom from './types';
 import type { JSX } from './types';
 
-const isArrayChildren = (children: Snabbdom.Node): children is readonly Snabbdom.VNodeChildElement[] =>
-    Array.isArray(children);
+const isArrayChildren = (children: Snabbdom.Node): children is readonly Snabbdom.Node[] => Array.isArray(children);
 
 const kebab2camel = (kebab: string): string => {
     const [hd, ...tl] = kebab.split('-');
@@ -122,6 +121,18 @@ const vnodify = (child: Snabbdom.VNodeChildElement): VNode => {
     return child;
 };
 
+const makeFragment = (children: Array<string | VNode>): VNode => ({
+    children,
+    data: {},
+    elm: undefined,
+    sel: undefined,
+    key: undefined,
+    text: undefined,
+});
+
+const flatten = (children: readonly Snabbdom.Node[]): VNode[] =>
+    children.map((x) => (isArrayChildren(x) ? makeFragment(flatten(x)) : vnodify(x)));
+
 export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unknown }, key?: Key): VNode => {
     data['key'] = key;
 
@@ -137,16 +148,16 @@ export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unkn
             // eslint-disable-next-line @typescript-eslint/naming-convention
             const { children: _, ...props } = data;
             const children = data['children'] as Snabbdom.Node;
-            vnode = vnodify(
-                tag(
-                    props,
-                    hasChildren
-                        ? isArrayChildren(children)
-                            ? children.flatMap((x) => (Array.isArray(x) ? x.map(vnodify) : vnodify(x)))
-                            : vnodify(children)
-                        : [],
-                ),
-            );
+
+            if (hasChildren) {
+                if (isArrayChildren(children)) {
+                    vnode = vnodify(tag(props, flatten(children)));
+                } else {
+                    vnode = vnodify(tag(props, children));
+                }
+            } else {
+                vnode = vnodify(tag(props, []));
+            }
         }
 
         if (data['$key'] !== undefined) {
@@ -178,23 +189,27 @@ export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unkn
 
     if (hasChildren) {
         if (isArrayChildren(children)) {
-            if (children.length === 1 && (typeof children[0] === 'number' || typeof children[0] === 'string')) {
+            const flatChildren = flatten(children);
+
+            if (
+                flatChildren.length === 1 &&
+                (typeof flatChildren[0] === 'number' || typeof flatChildren[0] === 'string')
+            ) {
                 vnode = {
                     children: undefined,
                     data: canonicalizedData,
                     elm: undefined,
                     sel,
                     key: canonicalizedData.key,
-                    text: String(children[0]),
+                    text: String(flatChildren[0]),
                 };
             } else if (
-                children.length === 1 &&
-                typeof children[0] === 'object' &&
-                children[0] !== null &&
-                children[0].sel === undefined
+                flatChildren.length === 1 &&
+                typeof flatChildren[0] === 'object' &&
+                flatChildren[0].sel === undefined
             ) {
                 vnode = {
-                    children: children[0].children,
+                    children: flatChildren[0].children,
                     data: canonicalizedData,
                     elm: undefined,
                     sel,
@@ -203,7 +218,7 @@ export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unkn
                 };
             } else {
                 vnode = {
-                    children: children.flatMap((x) => (Array.isArray(x) ? x.map(vnodify) : vnodify(x))),
+                    children: flatChildren.map(vnodify),
                     data: canonicalizedData,
                     elm: undefined,
                     sel,
@@ -293,7 +308,7 @@ export function jsxs(tag: string | JSX.ElementType, data: { [index: string]: unk
 
 export function Fragment({ children }: { children: Snabbdom.Node }): VNode {
     return {
-        children: children === undefined ? [] : [children].flat().map(vnodify),
+        children: children === undefined ? [] : isArrayChildren(children) ? flatten(children) : [vnodify(children)],
         data: {},
         elm: undefined,
         sel: undefined,

@@ -464,7 +464,104 @@ describe('automatic runtime', () => {
                 <span>Hello,</span>
                 {[<span>world!</span>]}
             </div>,
-        ).toStrictEqual(expected);
+        ).toStrictEqual({
+            children: [
+                {
+                    sel: 'span',
+                    text: 'Hello,',
+                    key: undefined,
+                    data: {},
+                    elm: undefined,
+                    children: undefined,
+                },
+                {
+                    children: [
+                        {
+                            children: undefined,
+                            data: {},
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'span',
+                            text: 'world!',
+                        },
+                    ],
+                    data: {},
+                    elm: undefined,
+                    key: undefined,
+                    sel: undefined,
+                    text: undefined,
+                },
+            ],
+            data: {},
+            elm: undefined,
+            key: undefined,
+            sel: 'div',
+            text: undefined,
+        });
+    });
+
+    test('nested children', () => {
+        expect(
+            <ul>{Array.from('ab').map((x) => Array.from('cd').map((y) => <li>{`${x}${y}`}</li>))}</ul>,
+        ).toStrictEqual({
+            children: [
+                {
+                    children: [
+                        {
+                            children: undefined,
+                            data: {},
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'li',
+                            text: 'ac',
+                        },
+                        {
+                            children: undefined,
+                            data: {},
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'li',
+                            text: 'ad',
+                        },
+                    ],
+                    data: {},
+                    elm: undefined,
+                    key: undefined,
+                    sel: undefined,
+                    text: undefined,
+                },
+                {
+                    children: [
+                        {
+                            children: undefined,
+                            data: {},
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'li',
+                            text: 'bc',
+                        },
+                        {
+                            children: undefined,
+                            data: {},
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'li',
+                            text: 'bd',
+                        },
+                    ],
+                    data: {},
+                    elm: undefined,
+                    key: undefined,
+                    sel: undefined,
+                    text: undefined,
+                },
+            ],
+            data: {},
+            elm: undefined,
+            key: undefined,
+            sel: 'ul',
+            text: undefined,
+        });
     });
 
     describe('fragments', () => {
