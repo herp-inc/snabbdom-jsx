@@ -905,7 +905,7 @@ export declare namespace Internal {
 declare namespace Snabbdom {
     type Component<Props> = (this: void, props: Readonly<Props>, children?: Node) => VNode;
     type Node = VNodeChildElement | readonly Node[];
-    type VNodeChildElement = boolean | null | number | string | undefined | VNode;
+    type VNodeChildElement = bigint | boolean | null | number | string | undefined | VNode;
 }
 // eslint-disable-next-line import/no-default-export
 export default Snabbdom;

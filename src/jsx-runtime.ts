@@ -96,7 +96,7 @@ const considerSVG = (vnode: VNode): VNode => {
 };
 
 const vnodify = (child: Snabbdom.VNodeChildElement): VNode => {
-    if (typeof child === 'string' || typeof child === 'number') {
+    if (typeof child === 'string' || typeof child === 'number' || typeof child === 'bigint') {
         return {
             children: undefined,
             data: undefined,
@@ -235,7 +235,7 @@ export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unkn
                 key: canonicalizedData.key,
                 text: undefined,
             };
-        } else if (typeof children === 'number' || typeof children === 'string') {
+        } else if (typeof children === 'bigint' || typeof children === 'number' || typeof children === 'string') {
             vnode = {
                 children: undefined,
                 data: canonicalizedData,
