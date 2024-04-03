@@ -29,7 +29,6 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
         if (key === '$attrs' || key === 'attrs') {
             data.attrs = Object.assign(v, data.attrs ?? {});
         } else if (key.startsWith('aria-')) {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.attrs ??= {};
             data.attrs[key] = v;
         } else if (key === 'children') {
@@ -42,7 +41,6 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
             data.dataset = Object.assign(v, data.dataset ?? {});
         } else if (key.startsWith('data-')) {
             const k = kebab2camel(key.replace('data-', ''));
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.dataset ??= {};
             data.dataset[k] = v;
         } else if (key === '$hook' || key === 'hook') {
@@ -63,7 +61,6 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
                 data.on[k] = v;
             }
         } else if (key === 'list' || key === 'role') {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.attrs ??= {};
             data.attrs[key] = v;
         } else if (key === '$style' || key === 'style') {
@@ -72,7 +69,6 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
             const mod = key.substring(1);
             data[mod] = v;
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             data.props ??= {};
             data.props[key] = v;
         }
@@ -145,7 +141,6 @@ export const jsx = (tag: JSX.ElementType, data: { [index: string]: unknown }, ke
         if (tag.length === 1) {
             vnode = vnodify(tag(data));
         } else {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             const { children: _, ...props } = data;
             const children = data['children'] as Snabbdom.Node;
 
