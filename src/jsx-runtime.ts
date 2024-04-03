@@ -133,7 +133,7 @@ const makeFragment = (children: Array<string | VNode>): VNode => ({
 const flatten = (children: readonly Snabbdom.Node[]): VNode[] =>
     children.map((x) => (isArrayChildren(x) ? makeFragment(flatten(x)) : vnodify(x)));
 
-export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unknown }, key?: Key): VNode => {
+export const jsx = (tag: JSX.ElementType, data: { [index: string]: unknown }, key?: Key): VNode => {
     data['key'] = key;
 
     const hasChildren = 'children' in data;
@@ -302,7 +302,7 @@ export const jsx = (tag: string | JSX.ElementType, data: { [index: string]: unkn
     return vnode;
 };
 
-export function jsxs(tag: string | JSX.ElementType, data: { [index: string]: unknown }): VNode {
+export function jsxs(tag: JSX.ElementType, data: { [index: string]: unknown }): VNode {
     return jsx(tag, data);
 }
 
