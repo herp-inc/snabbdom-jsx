@@ -27,7 +27,7 @@ jobs:
           yarn tsc --noEmit
       - name: Run ESLint
         run: |
-          yarn eslint --ext ts --ext tsx ./src
+          yarn eslint --ext ts --ext tsx ./src --report-unused-disable-directives
       - name: Run tests
         run: |
           yarn jest ./src

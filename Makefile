@@ -7,7 +7,7 @@ install:
 	yarn install
 
 lint: install
-	yarn eslint --ext ts --ext tsx ./src
+	yarn eslint --ext ts --ext tsx ./src --report-unused-disable-directives
 
 test: install
 	yarn jest --watch ./src
