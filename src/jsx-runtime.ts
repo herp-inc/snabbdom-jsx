@@ -117,17 +117,8 @@ const vnodify = (child: Snabbdom.VNodeChildElement): VNode => {
     return child;
 };
 
-const makeFragment = (children: Array<string | VNode>): VNode => ({
-    children,
-    data: {},
-    elm: undefined,
-    sel: undefined,
-    key: undefined,
-    text: undefined,
-});
-
 const flatten = (children: readonly Snabbdom.Node[]): VNode[] =>
-    children.map((x) => (isArrayChildren(x) ? makeFragment(flatten(x)) : vnodify(x)));
+    children.flatMap((x) => (isArrayChildren(x) ? flatten(x) : vnodify(x)));
 
 export const jsx = (tag: JSX.ElementType, data: { [index: string]: unknown }, key?: Key): VNode => {
     data['key'] = key;
