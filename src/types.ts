@@ -106,45 +106,45 @@ export declare namespace Internal {
     }
 
     type CommonProps = {
-        $hook?: Hooks;
-        $key?: Key;
+        $hook?: Hooks | undefined;
+        $key?: Key | undefined;
         /**
          * @deprecated Use `$attrs` attribute instead.
          */
-        attrs?: Attrs;
+        attrs?: Attrs | undefined;
         children?: Snabbdom.Node;
         /**
          * @deprecated Use `$class` attribute instead.
          */
-        class?: Classes;
+        class?: Classes | undefined;
         /**
          * @deprecated Use `$dataset` attribute instead.
          */
-        data?: Dataset;
+        data?: Dataset | undefined;
         /**
          * @deprecated Use `$dataset` attribute instead.
          */
-        dataset?: Dataset;
+        dataset?: Dataset | undefined;
         /**
          * @deprecated Use `$hook` attribute instead.
          */
-        hook?: Hooks;
+        hook?: Hooks | undefined;
         /**
          * @deprecated Use `$key` attribute instead.
          */
-        key?: Key;
+        key?: Key | undefined;
         /**
          * @deprecated Use `on*` attributes instead.
          */
-        on?: On;
+        on?: On | undefined;
         /**
          * @deprecated Pass properties as JSX attributes instead.
          */
-        props?: Props;
+        props?: Props | undefined;
         /**
          * @deprecated Use `$style` instead.
          */
-        style?: Style;
+        style?: Style | undefined;
     };
 
     type Modularize<Modules extends Record<string, any>> = {
@@ -924,7 +924,7 @@ export declare namespace JSX {
     type ElementType = keyof IntrinsicElements | ((props: any, children?: Snabbdom.Node) => Snabbdom.VNodeChildElement);
 
     type IntrinsicAttributes = {
-        $key?: Key;
+        $key?: Key | undefined;
         children?: unknown;
     };
 
