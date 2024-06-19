@@ -148,7 +148,7 @@ export declare namespace Internal {
     };
 
     type Modularize<Modules extends Record<string, any>> = {
-        [Mod in keyof Modules as Mod extends string ? `$${Mod}` : never]?: Modules[Mod];
+        [Mod in keyof Modules as Mod extends string ? `$${Mod}` : never]?: Modules[Mod] | undefined;
     };
 
     type HTMLElementProps<E extends HTMLElement, Props> = Props &
