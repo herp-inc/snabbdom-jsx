@@ -336,6 +336,7 @@ export declare namespace Internal {
         type Dir = 'ltr' | 'rtl' | 'auto' | Whatever;
         type EnterKeyHint = 'done' | 'enter' | 'go' | 'next' | 'previous' | 'search' | 'send' | Whatever;
         type InputMode = 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search' | Whatever;
+        type Popover = 'auto' | 'manual';
 
         interface Props extends Element.Props {
             accessKey?: string | undefined;
@@ -353,6 +354,7 @@ export declare namespace Internal {
             noModule?: boolean | undefined;
             nonce?: string | undefined;
             outerText?: string | undefined;
+            popover?: Popover | true | undefined;
             spellcheck?: boolean | undefined;
             tabIndex?: number | string | undefined;
             title?: string | undefined;
@@ -408,6 +410,7 @@ export declare namespace Internal {
     }
 
     namespace HTMLButtonElement {
+        type PopoverTargetAction = 'hide' | 'show' | 'toggle';
         type Type = 'button' | 'reset' | 'submit' | Whatever;
 
         interface Props extends HTMLElement.Props {
@@ -419,6 +422,8 @@ export declare namespace Internal {
             formNoValidate?: boolean | undefined;
             formTarget?: string | undefined;
             name?: string | undefined;
+            popoverTarget?: string | undefined;
+            popoverTargetAction?: PopoverTargetAction | undefined;
             type?: Type | undefined;
             value?: string;
         }

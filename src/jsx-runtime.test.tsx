@@ -1032,4 +1032,50 @@ describe('automatic runtime', () => {
             text: undefined,
         });
     });
+
+    test('popover API', () => {
+        expect(
+            <>
+                <button popoverTarget="popover" popoverTargetAction="toggle">
+                    Toggle
+                </button>
+                <div popover>Hello, world!</div>
+            </>,
+        ).toStrictEqual({
+            children: [
+                {
+                    children: undefined,
+                    data: {
+                        attrs: {
+                            popovertarget: 'popover',
+                        },
+                        props: {
+                            popoverTargetAction: 'toggle',
+                        },
+                    },
+                    elm: undefined,
+                    key: undefined,
+                    sel: 'button',
+                    text: 'Toggle',
+                },
+                {
+                    children: undefined,
+                    data: {
+                        props: {
+                            popover: 'auto',
+                        },
+                    },
+                    elm: undefined,
+                    key: undefined,
+                    sel: 'div',
+                    text: 'Hello, world!',
+                },
+            ],
+            data: {},
+            elm: undefined,
+            key: undefined,
+            sel: undefined,
+            text: undefined,
+        });
+    });
 });

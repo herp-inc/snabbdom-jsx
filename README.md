@@ -145,9 +145,10 @@ An attribute starting with `on` will passed to [the event listeners module](http
 // { on: { click: f } }
 ```
 
-### `list` and `role`
+### `list`, `role`, and `popoverTarget`
 
-The `list` and the `role` attributes will be passed to [the attributes module](https://github.com/snabbdom/snabbdom#the-attributes-module).
+The `list`, the `role`, and the `popoverTarget` attributes will be passed to [the attributes module](https://github.com/snabbdom/snabbdom#the-attributes-module).
+Note that the attribute names will be lowercased.
 
 ```tsx
 <div role="button" />
@@ -155,6 +156,9 @@ The `list` and the `role` attributes will be passed to [the attributes module](h
 
 <input list="options" />
 // { attrs: { list: 'options' } }
+
+<button popoverTarget="popover" />
+// { attrs: { popovertarget: 'popover' } }
 ```
 
 ### `$hook`
