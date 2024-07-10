@@ -1,8 +1,6 @@
 import type * as CSS from 'csstype';
 import type { Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode, VNodeData } from 'snabbdom';
 
-import type { jsx } from '.';
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Whatever = string & {};
 
@@ -1107,6 +1105,17 @@ declare namespace JSX {
         tspan: SVGElementProps<SVGTSpanElement>;
         use: SVGElementProps<SVGUseElement>;
         view: SVGElementProps<SVGViewElement>;
+    }
+}
+
+declare namespace jsx {
+    interface CustomModules {
+        attrs: Attrs;
+        class: Classes;
+        dataset: Dataset;
+        props: Props;
+        on: On;
+        style: Snabbdom.Style;
     }
 }
 
