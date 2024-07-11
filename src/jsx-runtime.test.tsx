@@ -1,6 +1,6 @@
 import type Snabbdom from '.';
 
-declare module '.' {
+declare module './jsx-runtime' {
     namespace jsx {
         interface CustomModules {
             custom: {
