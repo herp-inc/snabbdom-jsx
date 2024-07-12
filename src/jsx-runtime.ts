@@ -427,7 +427,7 @@ declare namespace Snabbdom {
             popoverTarget?: string | undefined;
             popoverTargetAction?: PopoverTargetAction | undefined;
             type?: Type | undefined;
-            value?: string;
+            value?: string | undefined;
         }
     }
 
