@@ -836,7 +836,7 @@ declare namespace Snabbdom {
     }
 
     namespace HTMLTableHeaderCellElement {
-        interface Props extends HTMLElement.Props {}
+        interface Props extends HTMLTableCellElement.Props {}
     }
 
     namespace HTMLTableRowElement {
