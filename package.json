@@ -20,7 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "@herp-inc/eslint-config": "202409.0.0",
-    "@herp-inc/eslint-config-jest": "0.4.0",
+    "@herp-inc/eslint-config-jest": "202409.1.0",
     "@herp-inc/tsconfig.json": "1.0.0",
     "@types/jest": "29.5.13",
     "@typescript-eslint/eslint-plugin": "7.18.0",
