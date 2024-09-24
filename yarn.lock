@@ -344,10 +344,10 @@
   resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config-jest/-/eslint-config-jest-0.4.0.tgz#de71118a6443d05ea0f4be4b6ba35acf3ca0dea5"
   integrity sha512-44m/LnZtgAK5MZQVdVb0oOKB5eq2wCbw7l92uY+qmjTqa1oesDQN6QPHGUpROcb/EDkDtcDBsG06QK9GfQvmdw==
 
-"@herp-inc/eslint-config@0.31.1":
-  version "0.31.1"
-  resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config/-/eslint-config-0.31.1.tgz#7402536d35358c81c99e889754f4845a0a31b31a"
-  integrity sha512-ph7M3hUrYDpdBH7u7jKEpgxl/rpUlosw+7b4XxMw8mXIdna1aFhdYyeQuFtMD4kS/GfijZCO/nZntx5ltiCtSw==
+"@herp-inc/eslint-config@202409.0.0":
+  version "202409.0.0"
+  resolved "https://registry.yarnpkg.com/@herp-inc/eslint-config/-/eslint-config-202409.0.0.tgz#3e3d59374aecfef2f454175518ef6dd1108ecee2"
+  integrity sha512-btelD+j8OH60gpHy4RFlPHyhTkTDrc2SsTcVFf1LT60e1zn9mHUGpbu14q02f3EuS8UIHm+Le/uXVJ3duAPajg==
 
 "@herp-inc/tsconfig.json@1.0.0":
   version "1.0.0"
