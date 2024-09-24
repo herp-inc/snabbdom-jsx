@@ -1,6 +1,12 @@
 import type * as CSS from 'csstype';
 import type { Attrs, Classes, Dataset, Hooks, Key, On, Props, VNode, VNodeData } from 'snabbdom';
 
+declare module 'csstype' {
+    interface Properties {
+        [_: `--${string}`]: unknown;
+    }
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Whatever = string & {};
 
