@@ -673,9 +673,9 @@ describe('automatic runtime', () => {
     test('conditional rendering', () => {
         expect(
             <div>
-                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
+                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, jest/no-conditional-in-test */}
                 {true && <span>shown</span>}
-                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
+                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, jest/no-conditional-in-test */}
                 {false && <span>hidden</span>}
                 {null}
                 {undefined}
