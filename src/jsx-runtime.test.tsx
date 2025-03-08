@@ -1033,6 +1033,133 @@ describe('automatic runtime', () => {
         });
     });
 
+    test('nested SVG', () => {
+        expect(
+            <svg id="foo" className="wrapper" viewBox="25 25 50 50">
+                <circle id="baz" className="circle" cx="50" cy="50" r="20" />
+                <svg id="bar" className="inner" viewBox="1 2 3 4">
+                    <circle id="garply" className="round" cx="10" cy="20" r="30" />
+                </svg>
+                <svg viewBox="5 6 7 8">
+                    <circle id="ding" className="ball" cx="40" cy="50" r="60" />
+                </svg>
+                <foreignObject id="xyzzy" className="abc">
+                    <a href="quux"/>
+                </foreignObject>
+            </svg>
+        ).toStrictEqual({
+            children: [
+                {
+                    children: undefined,
+                    data: {
+                        attrs: {
+                            cx: '50',
+                            cy: '50',
+                            r: '20',
+                        },
+                        ns: 'http://www.w3.org/2000/svg',
+                    },
+                    elm: undefined,
+                    key: undefined,
+                    sel: 'circle#baz.circle',
+                    text: undefined,
+                },
+                {
+                    children: [
+                        {
+                            children: undefined,
+                            data: {
+                                attrs: {
+                                    cx: '10',
+                                    cy: '20',
+                                    r: '30',
+                                },
+                                ns: 'http://www.w3.org/2000/svg',
+                            },
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'circle#garply.round',
+                            text: undefined,
+                        }
+                    ],
+                    data: {
+                        attrs: {
+                            viewBox: '1 2 3 4',
+                        },
+                        ns: 'http://www.w3.org/2000/svg',
+                    },
+                    elm: undefined,
+                    key: undefined,
+                    sel: 'svg#bar.inner',
+                    text: undefined,
+                },
+                {
+                    children: [
+                        {
+                            children: undefined,
+                            data: {
+                                attrs: {
+                                    cx: '40',
+                                    cy: '50',
+                                    r: '60',
+                                },
+                                ns: 'http://www.w3.org/2000/svg',
+                            },
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'circle#ding.ball',
+                            text: undefined,
+                        }
+                    ],
+                    data: {
+                        attrs: {
+                            viewBox: '5 6 7 8',
+                        },
+                        ns: 'http://www.w3.org/2000/svg',
+                    },
+                    elm: undefined,
+                    key: undefined,
+                    sel: 'svg',
+                    text: undefined,
+                },
+                {
+                    children: [
+                        {
+                            children: undefined,
+                            data: {
+                                props: {
+                                    href: 'quux',
+                                }
+                            },
+                            elm: undefined,
+                            key: undefined,
+                            sel: 'a',
+                            text: undefined,
+                        }
+                    ],
+                    data: {
+                        attrs: {},
+                        ns: 'http://www.w3.org/2000/svg',
+                    },
+                    elm: undefined,
+                    key: undefined,
+                    sel: 'foreignObject#xyzzy.abc',
+                    text: undefined,
+                },
+            ],
+            data: {
+                attrs: {
+                    viewBox: '25 25 50 50',
+                },
+                ns: 'http://www.w3.org/2000/svg',
+            },
+            elm: undefined,
+            key: undefined,
+            sel: 'svg#foo.wrapper',
+            text: undefined,
+        });
+    });
+
     test('popover API', () => {
         expect(
             <>

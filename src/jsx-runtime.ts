@@ -1205,6 +1205,14 @@ const canonicalizeVNodeData = (orig: VNodeData): VNodeData => {
     return data;
 };
 
+const tagFromSel = (sel: String | undefined): String | undefined => {
+    if (!sel) {
+        return undefined;
+    } else {
+        return sel.split(/[.#]/)[0];
+    }
+}
+
 const considerSVG = (vnode: VNode): VNode => {
     const { props: { className = undefined, ...attrs } = {}, ...data } = vnode.data ?? {};
 
@@ -1215,7 +1223,11 @@ const considerSVG = (vnode: VNode): VNode => {
             attrs,
             ns: 'http://www.w3.org/2000/svg',
         },
-        children: vnode.children?.map((child) => (typeof child === 'string' ? child : considerSVG(child))),
+        children: vnode.children?.map((child) =>
+            // Process children, but don't double-process nested svg elements that have already been processed,
+            // and don't process contents of foreignObject (which are not svg themselves).
+            (typeof child === 'string' || tagFromSel(child.sel) === 'svg' || tagFromSel(vnode.sel) === 'foreignObject'
+                ? child : considerSVG(child))),
     };
 };
 
